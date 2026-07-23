@@ -1,0 +1,29 @@
+# Changelog
+
+## 1.0.2 - 2026-07-23
+
+- Prevent full-page caches from serving guest catalog and portal output to signed-in customers.
+- Mark Packages, Submit, and Checkout non-cacheable through WordPress and LiteSpeed contracts.
+- Preserve entitled custom-service carts across WooCommerce session hydration while retaining server-side entitlement checks.
+- Add regression coverage for personalized-page cache isolation.
+- Publish the canonical plugin source for live Git version reporting.
+
+## 1.0.1 - 2026-07-23
+
+- Remove the custom carrier's persisted fallback price during migration and restore it on rollback.
+- Allowlist ACH plus explicitly entitled Stripe card checkout for managed orders.
+- Constrain Stripe universal Payment Elements to bank-account payments and reject direct card bypasses.
+- Add a migration/rollback lock and verify backup, plugin deactivation, runtime, and migration-state writes.
+- Expand preflight coverage to product mappings, replacement features, and ACH readiness.
+- Add gateway-policy and custom-carrier regression tests.
+
+## 1.0.0 - 2026-07-23
+
+- Introduce a guarded, plugin-owned billing and checkout runtime.
+- Add server-authoritative product, account pricing, and custom-service policies.
+- Add managed checkout fields, payment policy, Stripe descriptions, and idempotent fulfillment.
+- Add public catalog and signed-in ordering surfaces.
+- Add ACF customer billing and fulfillment linkage structures.
+- Add Hexa WP Core navigation, feature tests, reports, activity, Git reporting, and Core package reporting.
+- Add a preflighted, backed-up, reversible legacy ownership migration.
+- Add WP-CLI audit, status, migration, and rollback commands.

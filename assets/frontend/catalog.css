@@ -1,0 +1,150 @@
+.hpr-billing-catalog {
+    --hpr-red: #d9272e;
+    --hpr-ink: #0b0b0c;
+    --hpr-muted: #62666d;
+    --hpr-line: #dfe2e6;
+    color: var(--hpr-ink);
+    margin: 32px auto 56px;
+    max-width: 1120px;
+    padding: 0 24px;
+}
+
+.hpr-billing-catalog__header {
+    border-bottom: 2px solid var(--hpr-ink);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+}
+
+.hpr-billing-catalog__eyebrow {
+    color: var(--hpr-red);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0;
+    margin: 0 0 6px;
+    text-transform: uppercase;
+}
+
+.hpr-billing-catalog h2,
+.hpr-billing-catalog h3 {
+    letter-spacing: 0;
+    margin: 0;
+}
+
+.hpr-billing-catalog__grid {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.hpr-billing-service {
+    background: #fff;
+    border: 1px solid var(--hpr-line);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 250px;
+    padding: 22px;
+}
+
+.hpr-billing-service h3 {
+    font-size: 20px;
+    line-height: 1.25;
+}
+
+.hpr-billing-service p {
+    color: var(--hpr-muted);
+    line-height: 1.6;
+    margin: 12px 0 18px;
+}
+
+.hpr-billing-service__action {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.hpr-billing-service__price {
+    font-size: 22px;
+}
+
+.hpr-billing-button.button {
+    background: var(--hpr-red);
+    border: 1px solid var(--hpr-red);
+    border-radius: 4px;
+    color: #fff;
+    font-weight: 750;
+    line-height: 1.2;
+    padding: 12px 16px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.hpr-billing-button.button:hover,
+.hpr-billing-button.button:focus {
+    background: var(--hpr-ink);
+    border-color: var(--hpr-ink);
+    color: #fff;
+}
+
+.hpr-billing-button--secondary.button {
+    background: #fff;
+    border-color: var(--hpr-ink);
+    color: var(--hpr-ink);
+}
+
+.hpr-billing-button--small.button {
+    padding: 8px 13px;
+}
+
+.hpr-billing-catalog__account {
+    border-top: 1px solid var(--hpr-line);
+    margin: 26px 0 0;
+    padding: 18px 0 0;
+}
+
+.hpr-billing-custom-services {
+    border-top: 2px solid var(--hpr-ink);
+    margin-top: 34px;
+    padding-top: 18px;
+}
+
+.hpr-billing-custom-services__heading {
+    margin-bottom: 12px;
+}
+
+.hpr-billing-custom-services__rows {
+    border-top: 1px solid var(--hpr-line);
+}
+
+.hpr-billing-custom-service {
+    align-items: center;
+    border-bottom: 1px solid var(--hpr-line);
+    display: grid;
+    gap: 18px;
+    grid-template-columns: minmax(0, 1fr) 130px auto;
+    padding: 14px 0;
+}
+
+@media (max-width: 820px) {
+    .hpr-billing-catalog__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hpr-billing-service {
+        min-height: 0;
+    }
+}
+
+@media (max-width: 560px) {
+    .hpr-billing-catalog {
+        padding: 0 16px;
+    }
+
+    .hpr-billing-custom-service {
+        align-items: start;
+        grid-template-columns: 1fr;
+    }
+}
+
