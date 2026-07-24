@@ -44,6 +44,12 @@
 .hpr-billing-titlebar h1 {
     font-size: 26px;
     margin: 2px 0 0;
+    overflow-wrap: anywhere;
+}
+
+.hpr-billing-titlebar > * {
+    max-width: 100%;
+    min-width: 0;
 }
 
 .hpr-billing-kicker {
@@ -381,6 +387,36 @@
         gap: 4px;
     }
 
+    .hpr-billing-table--integration,
+    .hpr-billing-table--integration tbody,
+    .hpr-billing-table--integration tr,
+    .hpr-billing-table--integration th,
+    .hpr-billing-table--integration td {
+        display: block;
+        width: 100%;
+    }
+
+    .hpr-billing-table--integration tr {
+        border-top: 1px solid var(--hpr-line);
+        padding: 9px 0;
+    }
+
+    .hpr-billing-table--integration tr:first-child {
+        border-top: 0;
+        padding-top: 0;
+    }
+
+    .hpr-billing-table--integration tr:last-child {
+        padding-bottom: 0;
+    }
+
+    .hpr-billing-table--integration th,
+    .hpr-billing-table--integration td {
+        border: 0;
+        overflow-wrap: anywhere;
+        padding: 3px 0;
+    }
+
     .hpr-billing-toast {
         bottom: 12px;
         left: 12px;
@@ -388,4 +424,3 @@
         right: 12px;
     }
 }
-

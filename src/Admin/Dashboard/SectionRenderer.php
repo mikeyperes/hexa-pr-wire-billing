@@ -91,7 +91,7 @@ final class SectionRenderer {
 
         <section class="hpr-billing-panel">
             <div class="hpr-billing-panel__head"><div><h2>Integration status</h2><p>Required runtime and managed integration boundaries.</p></div></div>
-            <table class="widefat striped hpr-billing-table"><tbody>
+            <table class="widefat striped hpr-billing-table hpr-billing-table--integration"><tbody>
                 <?php $this->status_row( 'WooCommerce', Dependencies::woocommerce_active(), 'Required commerce engine' ); ?>
                 <?php $this->status_row( 'ACF Pro', Dependencies::acf_active(), 'Customer pricing and fulfillment field interface', true ); ?>
                 <?php $this->status_row( 'Hexa WP Core', defined( 'HEXA_PLUGIN_CORE_SELECTED_VERSION' ), defined( 'HEXA_PLUGIN_CORE_SELECTED_VERSION' ) ? 'Selected package ' . HEXA_PLUGIN_CORE_SELECTED_VERSION : 'No selected Core package' ); ?>

@@ -9,6 +9,7 @@ $bootstrap  = (string) file_get_contents( $root . '/src/Bootstrap/Plugin.php' );
 $controller = (string) file_get_contents( $root . '/src/Admin/Dashboard/DashboardController.php' );
 $navigation = (string) file_get_contents( $root . '/src/Admin/Navigation/AdminNavigation.php' );
 $dashboard  = (string) file_get_contents( $root . '/src/Admin/Dashboard/SectionRenderer.php' );
+$styles     = (string) file_get_contents( $root . '/assets/admin/dashboard.css' );
 $checkout   = (string) file_get_contents( $root . '/src/Commerce/Checkout/CheckoutFields.php' );
 $cart       = (string) file_get_contents( $root . '/src/Commerce/Cart/ManagedCart.php' );
 $migration  = (string) file_get_contents( $root . '/src/Migration/LegacyCommerceMigration.php' );
@@ -29,6 +30,8 @@ $requirements = [
     [ $dashboard, 'FieldStructureRenderer', 'Core ACF structure renderer' ],
     [ $dashboard, 'UpdaterPanelRenderer', 'Git updater reporting' ],
     [ $dashboard, 'CorePackagePanelRenderer', 'Core package reporting' ],
+    [ $dashboard, 'hpr-billing-table--integration', 'Responsive overview integration table' ],
+    [ $styles, '.hpr-billing-table--integration', 'Mobile integration table styles' ],
     [ $checkout, "woocommerce_email_order_meta_fields', [ \$this, 'email_order_fields' ], 20, 3", 'Woo email hook signature' ],
     [ $cart, 'woocommerce_check_cart_items', 'Checkout cart entitlement validation' ],
     [ $migration, 'recover_failed_migration', 'Automatic failed-migration recovery' ],
