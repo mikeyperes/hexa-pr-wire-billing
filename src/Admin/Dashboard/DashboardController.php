@@ -2,10 +2,13 @@
 
 namespace HexaPrWire\Billing\Admin\Dashboard;
 
+use Hexa\PluginCore\CorePackageUpdates\CorePackageStatus;
+use Hexa\PluginCore\PluginUpdates\PluginUpdateStatus;
 use Hexa\PluginCore\WpAdminTabs\HostTabsRenderer;
+use Hexa\PluginCore\WpAdminTabs\TabDefinition;
+use Hexa\PluginCore\WpAdminTabs\TabRegistry;
 use HexaPrWire\Billing\Admin\Ajax;
 use HexaPrWire\Billing\Admin\Navigation\AdminNavigation;
-use HexaPrWire\Billing\Admin\Navigation\SectionNavigation;
 use HexaPrWire\Billing\Config;
 use HexaPrWire\Billing\Support\Dependencies;
 
@@ -57,10 +60,12 @@ class DashboardController {
         }
 
         $navigation = $this->navigation();
+        $registry   = $this->tab_registry( $navigation );
+        $tabs       = $registry->all();
         $requested  = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'overview';
         $section    = isset( $_GET['section'] ) ? sanitize_key( wp_unslash( $_GET['section'] ) ) : '';
         $route      = $navigation->resolve( $requested, $section );
-        $tabs       = $navigation->areas();
+        $active     = $route->section();
         ?>
         <div class="wrap hpr-billing-admin" data-hpr-billing-admin data-ajax-url="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>" data-nonce="<?php echo esc_attr( Ajax::nonce() ); ?>">
             <div class="hpr-billing-titlebar">
@@ -74,17 +79,22 @@ class DashboardController {
             ( new HostTabsRenderer() )->render(
                 [
                     'tabs'            => $tabs,
-                    'active'          => $route->area(),
+                    'active'          => $active,
                     'page_url'        => $this->page_url(),
                     'ajax_action'     => 'hpr_billing_load_tab',
                     'nonce'           => Ajax::nonce(),
                     'nonce_field'     => 'nonce',
-                    'root_id'         => 'hpr-billing-tabs',
+                    'root_id'         => 'hpr-billing-core-tabs',
                     'panel_id'        => 'hpr-billing-tab-panel',
                     'label'           => 'Hexa PR Wire Billing sections',
-                    'render_callback' => function ( string $area ) use ( $route ): void {
-                        $section = $area === $route->area() ? $route->section() : '';
-                        $this->render_area( $area, $section );
+                    'layout'           => 'sidebar',
+                    'groups'           => $navigation->groups(),
+                    'sidebar_identity' => $this->sidebar_identity(),
+                    'sidebar_collapsible' => true,
+                    'sidebar_collapsed'   => false,
+                    'sidebar_persist'     => true,
+                    'render_callback' => function ( string $tab ) use ( $registry ): void {
+                        $this->render_registered_tab( $registry, $tab );
                     },
                 ]
             );
@@ -96,31 +106,91 @@ class DashboardController {
 
     public function tab_fragment( string $id ): array {
         $navigation = $this->navigation();
+        $registry   = $this->tab_registry( $navigation );
         $route      = $navigation->resolve( $id );
-        $tabs       = $navigation->areas();
+        $tab_id     = $route->section();
+        $definition = $registry->get( $tab_id ) ?? $registry->get( 'overview' );
+
+        if ( ! $definition instanceof TabDefinition ) {
+            return [
+                'tab'   => 'overview',
+                'label' => 'Overview',
+                'html'  => '',
+            ];
+        }
+
+        $tab_id = $definition->id;
 
         ob_start();
-        $this->render_area( $route->area(), $route->section() );
+        $this->render_registered_tab( $registry, $tab_id );
         $html = ob_get_clean();
 
         return [
-            'tab'   => $route->area(),
-            'label' => (string) ( $tabs[ $route->area() ] ?? $route->area() ),
+            'tab'   => $tab_id,
+            'label' => $this->tab_label( $definition ),
             'html'  => is_string( $html ) ? $html : '',
         ];
     }
 
-    private function render_area( string $area, string $section = '' ): void {
-        $navigation = $this->navigation();
-        $route      = $navigation->resolve( $area, $section );
+    private function tab_registry( ?AdminNavigation $navigation = null ): TabRegistry {
+        $navigation = $navigation ?? $this->navigation();
 
-        ( new SectionNavigation( $navigation ) )->render( $route, $this->page_url() );
+        return $navigation->registry(
+            function ( string $id ): void {
+                $this->render_tab( $id );
+            },
+            Config::$settings_page_capability
+        );
+    }
 
-        if ( apply_filters( 'hpr_billing_render_dashboard_tab', false, $route->section() ) ) {
+    private function render_registered_tab( TabRegistry $registry, string $id ): void {
+        $definition = $registry->get( $id ) ?? $registry->get( 'overview' );
+        if ( ! $definition instanceof TabDefinition ) {
             return;
         }
 
-        ( new SectionRenderer() )->render( $route->section() );
+        if (
+            null !== $definition->capability
+            && '' !== $definition->capability
+            && ! current_user_can( $definition->capability )
+        ) {
+            echo '<div class="notice notice-error"><p>You do not have permission to view this section.</p></div>';
+            return;
+        }
+
+        if ( is_callable( $definition->renderer ) ) {
+            call_user_func( $definition->renderer );
+        }
+    }
+
+    private function tab_label( TabDefinition $definition ): string {
+        return $definition->label . ( $definition->deprecated ? ' (Deprecated)' : '' );
+    }
+
+    private function render_tab( string $id ): void {
+        if ( apply_filters( 'hpr_billing_render_dashboard_tab', false, $id ) ) {
+            return;
+        }
+
+        ( new SectionRenderer() )->render( $id );
+    }
+
+    /**
+     * @return array<string,string>
+     */
+    private function sidebar_identity(): array {
+        $plugin_status = ( new PluginUpdateStatus( \HexaPrWire\Billing\updater_config() ) )->get();
+        $core_status   = ( new CorePackageStatus( \HexaPrWire\Billing\core_package_config() ) )->get();
+
+        return [
+            'plugin_name'     => (string) ( $plugin_status['plugin_name'] ?? Config::$plugin_name ),
+            'current_version' => (string) ( $plugin_status['current_version'] ?? Config::VERSION ),
+            'github_version'  => (string) ( $plugin_status['latest_version'] ?? 'Unknown' ),
+            'github_url'      => (string) ( $plugin_status['github_url'] ?? 'https://github.com/' . Config::$github_repo ),
+            'core_name'       => 'Hexa WP Core',
+            'core_version'    => (string) ( $core_status['current_version'] ?? 'Unknown' ),
+            'core_github_url' => (string) ( $core_status['github_url'] ?? 'https://github.com/mikeyperes/hexa-wordpress-plugin-core' ),
+        ];
     }
 
     private function navigation(): AdminNavigation {

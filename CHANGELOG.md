@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.3 - 2026-07-23
+
+- Move billing administration onto the Hexa WP Core tab registry and grouped sidebar renderer used by SMP Publication Integration.
+- Add plugin and Hexa WP Core Git version identity to the Core-owned navigation rail.
+- Preserve direct, grouped, legacy, Core, and third-party extension tab routes.
+- Add regression coverage for Core tab definitions, sidebar groups, capabilities, and renderer dispatch.
+
 ## 1.0.2 - 2026-07-23
 
 - Prevent full-page caches from serving guest catalog and portal output to signed-in customers.

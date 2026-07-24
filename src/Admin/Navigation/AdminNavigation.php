@@ -2,7 +2,27 @@
 
 namespace HexaPrWire\Billing\Admin\Navigation;
 
+use Hexa\PluginCore\WpAdminTabs\TabDefinition;
+use Hexa\PluginCore\WpAdminTabs\TabRegistry;
+
 final class AdminNavigation {
+    private const FLAT_TABS = [
+        'overview'      => 'Overview',
+        'catalog'       => 'Catalog',
+        'checkout'      => 'Checkout',
+        'payments'      => 'Payments',
+        'fulfillment'   => 'Fulfillment',
+        'pricing'       => 'Pricing',
+        'order_portal'  => 'Order Portal',
+        'orders'        => 'Orders',
+        'integrity'     => 'Integrity',
+        'activity'      => 'Activity',
+        'features'      => 'Features',
+        'custom_fields' => 'ACF',
+        'git_updates'   => 'Git Reporting',
+        'hexa_core'     => 'Hexa WP Core',
+    ];
+
     private const AREAS = [
         'overview'  => 'Overview',
         'commerce'  => 'Commerce',
@@ -37,6 +57,90 @@ final class AdminNavigation {
             'hexa_core'     => 'Hexa WP Core',
         ],
     ];
+
+    /**
+     * @return array<string,string>
+     */
+    public function tabs(): array {
+        $tabs = self::FLAT_TABS;
+
+        foreach ( $this->legacy_tab_labels() as $id => $label ) {
+            $id = sanitize_key( (string) $id );
+            if ( '' !== $id && ! isset( $tabs[ $id ] ) && ! $this->known_section( $id ) ) {
+                $tabs[ $id ] = (string) $label;
+            }
+        }
+
+        return apply_filters( 'hpr_billing_dashboard_flat_tabs', $tabs );
+    }
+
+    /**
+     * @return array<int,array{label:string,tabs:array<int,string>}>
+     */
+    public function groups(): array {
+        $tabs     = $this->tabs();
+        $assigned = [];
+        $groups   = [];
+
+        foreach ( $this->areas() as $area => $area_label ) {
+            $group_tabs = [];
+            foreach ( array_keys( $this->sections( (string) $area ) ) as $id ) {
+                $id = sanitize_key( (string) $id );
+                if ( '' !== $id && isset( $tabs[ $id ] ) && ! isset( $assigned[ $id ] ) ) {
+                    $group_tabs[]    = $id;
+                    $assigned[ $id ] = true;
+                }
+            }
+
+            if ( [] !== $group_tabs ) {
+                $groups[] = [
+                    'label' => (string) $area_label,
+                    'tabs'  => $group_tabs,
+                ];
+            }
+        }
+
+        $leftover = [];
+        foreach ( array_keys( $tabs ) as $id ) {
+            $id = sanitize_key( (string) $id );
+            if ( '' !== $id && ! isset( $assigned[ $id ] ) ) {
+                $leftover[] = $id;
+            }
+        }
+
+        if ( [] !== $leftover ) {
+            $groups[] = [
+                'label' => 'More',
+                'tabs'  => $leftover,
+            ];
+        }
+
+        return apply_filters( 'hpr_billing_dashboard_tab_groups', $groups );
+    }
+
+    public function registry( callable $renderer, ?string $capability = null ): TabRegistry {
+        $registry = new TabRegistry();
+
+        foreach ( $this->tabs() as $id => $label ) {
+            $id = sanitize_key( (string) $id );
+            if ( '' === $id ) {
+                continue;
+            }
+
+            $registry->add(
+                new TabDefinition(
+                    $id,
+                    (string) $label,
+                    static function () use ( $renderer, $id ): void {
+                        $renderer( $id );
+                    },
+                    $capability
+                )
+            );
+        }
+
+        return $registry;
+    }
 
     public function areas(): array {
         return apply_filters( 'hpr_billing_dashboard_areas', self::AREAS );
@@ -81,6 +185,9 @@ final class AdminNavigation {
             if ( isset( $this->sections( $area )[ $tab ] ) ) {
                 return new AdminRoute( $area, $tab );
             }
+        }
+        if ( isset( $this->tabs()[ $tab ] ) ) {
+            return new AdminRoute( 'advanced', $tab );
         }
         return new AdminRoute( 'overview', 'overview' );
     }
