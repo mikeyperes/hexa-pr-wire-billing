@@ -53,6 +53,17 @@ Order and fulfillment metadata:
 - `billing_invoice_id`
 - `billing_original_title`
 - `billing_service`
+- `_hpr_portal_order_public_id`
+- `_hpr_portal_order_number`
+- `_hpr_portal_purchased_at`
+- `_hpr_portal_amount_cents`
+- `_hpr_portal_currency`
+- `_hpr_portal_invoice_id`
+- `_hpr_portal_invoice_link`
+- `_hpr_portal_billing_mode`
+- `_hpr_portal_service`
+
+Service Order Portal provenance is displayed read-only in the post editor. The purchase price is always visible, including zero-dollar approved/no-charge orders. The source-order button accepts only `billing.hexawebsystems.com` URLs and therefore remains an authenticated internal control rather than a public post link.
 
 Prices and custom-service entitlements are resolved from the server on every cart totals pass. Query-string prices are never accepted. A custom cart becomes invalid when the signed-in account no longer owns its service. Migration also clears the custom carrier's persisted fallback price, while rollback restores the exact prior product values.
 

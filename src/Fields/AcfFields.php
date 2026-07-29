@@ -15,6 +15,8 @@ final class AcfFields {
         add_action( 'acf/init', [ $this, 'register_groups' ] );
         add_filter( 'acf/prepare_field/key=field_6640053880290', [ $this, 'hide_legacy_billing_group' ] );
         add_filter( 'acf/prepare_field/key=field_66417d52d4884', [ $this, 'hide_legacy_billing_group' ] );
+        add_filter( 'acf/load_value/key=field_hpr_portal_amount_display', [ $this, 'load_portal_amount' ], 10, 3 );
+        add_filter( 'acf/prepare_field/key=field_hpr_portal_invoice_link_action', [ $this, 'prepare_portal_order_link' ] );
     }
 
     public function hide_legacy_billing_group( array|false $field ): false {
@@ -114,6 +116,72 @@ final class AcfFields {
                         'type'     => 'text',
                         'readonly' => 1,
                     ],
+                    [
+                        'key'          => 'field_hpr_portal_order_heading',
+                        'label'        => 'Service Order Portal Provenance',
+                        'name'         => '',
+                        'type'         => 'message',
+                        'message'      => 'Read-only purchase provenance supplied by the internal Service Order Portal.',
+                        'new_lines'    => 'wpautop',
+                        'esc_html'     => 1,
+                    ],
+                    [
+                        'key'      => 'field_hpr_portal_order_number',
+                        'label'    => 'Portal Order Number',
+                        'name'     => '_hpr_portal_order_number',
+                        'type'     => 'text',
+                        'readonly' => 1,
+                        'disabled' => 1,
+                    ],
+                    [
+                        'key'      => 'field_hpr_portal_purchased_at',
+                        'label'    => 'Purchased At',
+                        'name'     => '_hpr_portal_purchased_at',
+                        'type'     => 'text',
+                        'readonly' => 1,
+                        'disabled' => 1,
+                    ],
+                    [
+                        'key'      => 'field_hpr_portal_amount_display',
+                        'label'    => 'Purchased For',
+                        'name'     => 'hpr_portal_amount_display',
+                        'type'     => 'text',
+                        'readonly' => 1,
+                        'disabled' => 1,
+                    ],
+                    [
+                        'key'      => 'field_hpr_portal_invoice_id',
+                        'label'    => 'Stripe Invoice ID',
+                        'name'     => '_hpr_portal_invoice_id',
+                        'type'     => 'text',
+                        'readonly' => 1,
+                        'disabled' => 1,
+                    ],
+                    [
+                        'key'      => 'field_hpr_portal_billing_mode',
+                        'label'    => 'Portal Billing Mode',
+                        'name'     => '_hpr_portal_billing_mode',
+                        'type'     => 'text',
+                        'readonly' => 1,
+                        'disabled' => 1,
+                    ],
+                    [
+                        'key'      => 'field_hpr_portal_service',
+                        'label'    => 'Portal Service',
+                        'name'     => '_hpr_portal_service',
+                        'type'     => 'text',
+                        'readonly' => 1,
+                        'disabled' => 1,
+                    ],
+                    [
+                        'key'       => 'field_hpr_portal_invoice_link_action',
+                        'label'     => 'Internal Billing Record',
+                        'name'      => '',
+                        'type'      => 'message',
+                        'message'   => 'No Service Order Portal record is attached.',
+                        'new_lines' => '',
+                        'esc_html'  => 0,
+                    ],
                 ],
                 'location' => [
                     [
@@ -126,5 +194,38 @@ final class AcfFields {
             ]
         );
     }
-}
 
+    public function load_portal_amount( mixed $value, mixed $post_id, array $field ): string {
+        unset( $value, $field );
+        $post_id  = (int) $post_id;
+        $cents    = (int) get_post_meta( $post_id, '_hpr_portal_amount_cents', true );
+        $currency = strtoupper( (string) get_post_meta( $post_id, '_hpr_portal_currency', true ) );
+        $currency = '' !== $currency ? $currency : 'USD';
+
+        return ( 'USD' === $currency ? '$' : '' ) . number_format( $cents / 100, 2 ) . ' ' . $currency;
+    }
+
+    public function prepare_portal_order_link( array|false $field ): array|false {
+        if ( false === $field ) {
+            return false;
+        }
+
+        $post_id = isset( $_GET['post'] ) ? absint( wp_unslash( $_GET['post'] ) ) : 0;
+        $url     = $post_id > 0 ? (string) get_post_meta( $post_id, '_hpr_portal_invoice_link', true ) : '';
+        $host    = '' !== $url ? strtolower( (string) wp_parse_url( $url, PHP_URL_HOST ) ) : '';
+        if ( 'billing.hexawebsystems.com' !== $host ) {
+            $field['message'] = 'No authenticated Billing record is attached to this post.';
+            return $field;
+        }
+
+        $invoice_id      = (string) get_post_meta( $post_id, '_hpr_portal_invoice_id', true );
+        $reference_label = '' !== $invoice_id ? 'Open invoice ' . $invoice_id : 'Open source order';
+        $field['message'] = sprintf(
+            '<a class="button button-secondary" href="%s" target="_blank" rel="noopener noreferrer">%s</a><p class="description">Billing authentication is required.</p>',
+            esc_url( $url ),
+            esc_html( $reference_label )
+        );
+
+        return $field;
+    }
+}

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.5 - 2026-07-29
+
+- Add read-only Service Order Portal provenance to the post editor, including purchase time, visible price, Stripe invoice ID, billing mode, and service.
+- Add a validated, authenticated Billing link for opening the source order without exposing it on public pages.
+- Add regression coverage for provenance metadata, price formatting, and Billing-host link restrictions.
+
 ## 1.0.4 - 2026-07-23
 
 - Stack the overview integration report rows on narrow admin viewports so table content stays inside the Core tab panel.

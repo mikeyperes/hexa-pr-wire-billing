@@ -4,7 +4,7 @@
  * Description: Billing, checkout, customer pricing, payment policy, and fulfillment for Hexa PR Wire.
  * Author: Michael Peres
  * Plugin URI: https://github.com/mikeyperes/hexa-pr-wire-billing
- * Version: 1.0.4
+ * Version: 1.0.5
  * Text Domain: hexa-pr-wire-billing
  * Domain Path: /languages
  * Author URI: https://michaelperes.com
@@ -34,7 +34,7 @@ require_once $hexa_plugin_core_root . '/bootstrap.php';
 );
 
 final class Config {
-    public const VERSION = '1.0.4';
+    public const VERSION = '1.0.5';
 
     public static string $plugin_name        = 'Hexa PR Wire Billing';
     public static string $plugin_slug        = 'hexa-pr-wire-billing';
