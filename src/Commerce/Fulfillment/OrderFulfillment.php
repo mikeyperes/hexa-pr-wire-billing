@@ -137,12 +137,12 @@ final class OrderFulfillment {
         update_post_meta( $post_id, 'billing_original_title', $article );
         update_post_meta( $post_id, 'billing_service', $service );
 
-        if ( function_exists( 'update_field' ) ) {
-            update_field( 'field_651368fa55448', $user_id, $post_id );
-            update_field( 'field_65625151e2502', $order_id, $post_id );
-            update_field( 'field_hpr_billing_order_invoice_id', $order_id, $post_id );
-            update_field( 'field_hpr_billing_order_original_title', $article, $post_id );
-            update_field( 'field_hpr_billing_order_service', $service, $post_id );
+        if ( \Hexa\PluginCore\Fields\Field::available() ) {
+            \Hexa\PluginCore\Fields\Field::update( 'field_651368fa55448', $user_id, $post_id );
+            \Hexa\PluginCore\Fields\Field::update( 'field_65625151e2502', $order_id, $post_id );
+            \Hexa\PluginCore\Fields\Field::update( 'field_hpr_billing_order_invoice_id', $order_id, $post_id );
+            \Hexa\PluginCore\Fields\Field::update( 'field_hpr_billing_order_original_title', $article, $post_id );
+            \Hexa\PluginCore\Fields\Field::update( 'field_hpr_billing_order_service', $service, $post_id );
         }
     }
 

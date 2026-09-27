@@ -89,9 +89,8 @@ final class FeatureDefinitions {
                 'fields',
                 'Registers customer pricing, custom services, card access, and fulfillment linkage with stable local field keys.',
                 'group_hpr_billing_customer_settings and group_hpr_billing_order_linkage',
-                static fn(): bool => function_exists( 'acf_get_field_group' )
-                    && (bool) acf_get_field_group( 'group_hpr_billing_customer_settings' )
-                    && (bool) acf_get_field_group( 'group_hpr_billing_order_linkage' )
+                static fn(): bool => (bool) \Hexa\PluginCore\Fields\FieldGroups::get_group( 'group_hpr_billing_customer_settings' )
+                    && (bool) \Hexa\PluginCore\Fields\FieldGroups::get_group( 'group_hpr_billing_order_linkage' )
             ),
         ];
     }

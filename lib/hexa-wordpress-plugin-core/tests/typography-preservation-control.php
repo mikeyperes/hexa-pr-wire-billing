@@ -53,9 +53,11 @@ foreach ( [ "font_family", "font_size", "font_color", "font_weight" ] as $proper
 }
 typography_assert( str_contains( $markup, 'data-key="article_heading_preserve_font_family"' ), "Host save keys must be exposed without host-specific rendering." );
 typography_assert( str_contains( $markup, 'data-hpc-typography-targets="article_heading_h2_font_size,article_heading_h3_font_size"' ), "Target controls must be declared generically." );
+typography_assert( str_contains( $markup, "Use site font" ) && str_contains( $markup, "Use site text size" ) && str_contains( $markup, "Use site text color" ) && str_contains( $markup, "Use site font weight" ), "Inheritance toggles must use clear site-value wording." );
 typography_assert( str_contains( $markup, "hexaTypographyPreservationReady" ), "Core must own preservation synchronization JavaScript." );
 $source = (string) file_get_contents( $root . "/src/WpAdminComponents/TypographyPreservationControl.php" );
 typography_assert( str_contains( $source, '[data-hpc-color-control][data-key="' ) && str_contains( $source, '[data-hpc-color-picker],[data-hpc-color-hex-input],[data-hpc-color-value-input],[data-hpc-brand-color-import],[data-hpc-color-inherit]' ), "Preserved colors must disable the complete Core color editor." );
+typography_assert( str_contains( $source, '.hpc-color-row,.hpc-font-family-field,.hpc-typography-number-control,.hpc-typography-style-field' ) && str_contains( $source, 'hpc-typography-value-inherited' ), "Inherited editors must share one visible disabled-state treatment." );
 typography_assert( ! str_contains( $markup, "smpi-" ), "Core preservation markup must remain host-neutral." );
 
 echo "PASS: Core typography preservation settings are reusable, prefix-scoped, and host-neutral." . PHP_EOL;

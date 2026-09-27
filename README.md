@@ -13,7 +13,7 @@ Required runtime:
 - WordPress 6.5 or newer
 - PHP 8.0 or newer
 - WooCommerce
-- ACF Pro for the managed field interface; metadata behavior remains available without its UI
+- No ACF Pro requirement: the managed field interface runs on Hexa WP Core custom fields (ACF when active, native otherwise)
 - Vendored Hexa WP Core 0.19.73
 
 ## Admin Structure

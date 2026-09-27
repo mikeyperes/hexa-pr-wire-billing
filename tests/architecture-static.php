@@ -74,7 +74,7 @@ if ( '' === $manifest_version || 1 !== count( array_unique( $release_versions ) 
 
 $version = trim( (string) file_get_contents( $root . '/lib/hexa-wordpress-plugin-core/VERSION' ) );
 $hash    = trim( (string) file_get_contents( $root . '/lib/hexa-wordpress-plugin-core/PACKAGE_HASH' ) );
-if ( '0.19.73' !== $version || 'f62aa1db620b66ae7822cd0dadc66525f181fc53d973106a8b29301b95e10575' !== $hash ) {
+if ( '3.4.9' !== $version || '037834d247351c51f28a97e2b609d3b6a4d7e5153775d7de1ea18ae15c8b2ea3' !== $hash ) {
     fwrite( STDERR, "FAIL: Vendored Core version or package hash is not the audited package.\n" );
     exit( 1 );
 }

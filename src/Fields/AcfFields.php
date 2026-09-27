@@ -12,11 +12,11 @@ final class AcfFields {
         if ( ! SettingsRepository::runtime_enabled() || ! SettingsRepository::feature_enabled( 'acf_fields' ) ) {
             return;
         }
-        add_action( 'acf/init', [ $this, 'register_groups' ] );
-        add_filter( 'acf/prepare_field/key=field_6640053880290', [ $this, 'hide_legacy_billing_group' ] );
-        add_filter( 'acf/prepare_field/key=field_66417d52d4884', [ $this, 'hide_legacy_billing_group' ] );
-        add_filter( 'acf/load_value/key=field_hpr_portal_amount_display', [ $this, 'load_portal_amount' ], 10, 3 );
-        add_filter( 'acf/prepare_field/key=field_hpr_portal_invoice_link_action', [ $this, 'prepare_portal_order_link' ] );
+        \Hexa\PluginCore\Fields\Hooks::on( 'init', [ $this, 'register_groups' ] );
+        \Hexa\PluginCore\Fields\Hooks::on( 'prepare_field/key=field_6640053880290', [ $this, 'hide_legacy_billing_group' ] );
+        \Hexa\PluginCore\Fields\Hooks::on( 'prepare_field/key=field_66417d52d4884', [ $this, 'hide_legacy_billing_group' ] );
+        \Hexa\PluginCore\Fields\Hooks::on( 'load_value/key=field_hpr_portal_amount_display', [ $this, 'load_portal_amount' ], 10, 3 );
+        \Hexa\PluginCore\Fields\Hooks::on( 'prepare_field/key=field_hpr_portal_invoice_link_action', [ $this, 'prepare_portal_order_link' ] );
     }
 
     public function hide_legacy_billing_group( array|false $field ): false {
@@ -25,11 +25,7 @@ final class AcfFields {
     }
 
     public function register_groups(): void {
-        if ( ! function_exists( 'acf_add_local_field_group' ) ) {
-            return;
-        }
-
-        acf_add_local_field_group(
+        \Hexa\PluginCore\Fields\FieldGroups::add(
             [
                 'key'      => self::CUSTOMER_GROUP,
                 'title'    => 'Hexa PR Wire Billing',
@@ -90,7 +86,7 @@ final class AcfFields {
             ]
         );
 
-        acf_add_local_field_group(
+        \Hexa\PluginCore\Fields\FieldGroups::add(
             [
                 'key'      => self::ORDER_GROUP,
                 'title'    => 'Hexa PR Wire Billing Linkage',

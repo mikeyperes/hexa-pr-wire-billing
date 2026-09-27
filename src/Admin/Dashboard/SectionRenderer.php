@@ -93,7 +93,7 @@ final class SectionRenderer {
             <div class="hpr-billing-panel__head"><div><h2>Integration status</h2><p>Required runtime and managed integration boundaries.</p></div></div>
             <table class="widefat striped hpr-billing-table hpr-billing-table--integration"><tbody>
                 <?php $this->status_row( 'WooCommerce', Dependencies::woocommerce_active(), 'Required commerce engine' ); ?>
-                <?php $this->status_row( 'ACF Pro', Dependencies::acf_active(), 'Customer pricing and fulfillment field interface', true ); ?>
+                <?php $this->status_row( 'Custom fields', true, 'Customer pricing and fulfillment field interface (' . \Hexa\PluginCore\Fields\Acf::mode() . ')', true ); ?>
                 <?php $this->status_row( 'Hexa WP Core', defined( 'HEXA_PLUGIN_CORE_SELECTED_VERSION' ), defined( 'HEXA_PLUGIN_CORE_SELECTED_VERSION' ) ? 'Selected package ' . HEXA_PLUGIN_CORE_SELECTED_VERSION : 'No selected Core package' ); ?>
                 <tr><th>Migration state</th><td><?php echo esc_html( (string) ( $migration['status'] ?? 'not_started' ) ); ?></td><td><?php echo esc_html( (string) ( $migration['completed_at'] ?? $migration['rolled_back_at'] ?? 'No ownership transfer recorded' ) ); ?></td></tr>
             </tbody></table>
@@ -328,14 +328,14 @@ final class SectionRenderer {
                     'description'   => 'Per-account standard pricing, custom service rows, and card access.',
                     'setting_key'   => SettingsRepository::FEATURE_OPTIONS['acf_fields'],
                     'enabled'       => $enabled,
-                    'registered'    => static fn(): bool => function_exists( 'acf_get_field_group' ) && (bool) acf_get_field_group( AcfFields::CUSTOMER_GROUP ),
+                    'registered'    => static fn(): bool => \Hexa\PluginCore\Fields\Field::available() && (bool) \Hexa\PluginCore\Fields\FieldGroups::get_group( AcfFields::CUSTOMER_GROUP ),
                     'acf_group_key' => AcfFields::CUSTOMER_GROUP,
                     'object_name'   => 'user',
                     'location'      => 'User edit screen for administrators',
                     'fields'        => [ 'billing_price_standard_release', 'billing_custom_services', 'billing_allow_credit_card' ],
-                    'dependencies'  => [ 'ACF Pro', 'WordPress user metadata' ],
+                    'dependencies'  => [ 'WordPress user metadata' ],
                     'instructions'  => 'Edit a customer account in Users. Empty standard pricing falls back to the mapped product price.',
-                    'test_report'   => Dependencies::acf_active() ? 'ACF is available; registration is reported above.' : 'ACF is unavailable; metadata remains readable without the field interface.',
+                    'test_report'   => 'Custom fields run on ' . \Hexa\PluginCore\Fields\Acf::mode() . '; registration is reported above.',
                 ],
                 [
                     'id'            => 'billing_fulfillment_linkage',
@@ -344,14 +344,14 @@ final class SectionRenderer {
                     'description'   => 'Read-only order, original title, and service metadata on generated editorial drafts.',
                     'setting_key'   => SettingsRepository::FEATURE_OPTIONS['acf_fields'],
                     'enabled'       => $enabled,
-                    'registered'    => static fn(): bool => function_exists( 'acf_get_field_group' ) && (bool) acf_get_field_group( AcfFields::ORDER_GROUP ),
+                    'registered'    => static fn(): bool => \Hexa\PluginCore\Fields\Field::available() && (bool) \Hexa\PluginCore\Fields\FieldGroups::get_group( AcfFields::ORDER_GROUP ),
                     'acf_group_key' => AcfFields::ORDER_GROUP,
                     'object_name'   => 'post',
                     'location'      => 'Post edit screen for administrators',
                     'fields'        => [ 'billing_invoice_id', 'billing_original_title', 'billing_service' ],
-                    'dependencies'  => [ 'ACF Pro', 'WooCommerce order CRUD', 'WordPress post metadata' ],
+                    'dependencies'  => [ 'WooCommerce order CRUD', 'WordPress post metadata' ],
                     'instructions'  => 'Values are written by fulfillment and are not customer-editable.',
-                    'test_report'   => Dependencies::acf_active() ? 'ACF is available; registration is reported above.' : 'ACF is unavailable; post metadata still persists during fulfillment.',
+                    'test_report'   => 'Custom fields run on ' . \Hexa\PluginCore\Fields\Acf::mode() . '; registration is reported above.',
                 ],
             ],
             [

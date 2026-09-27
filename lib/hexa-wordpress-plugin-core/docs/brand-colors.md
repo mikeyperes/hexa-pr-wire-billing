@@ -21,6 +21,7 @@ Brand color helpers keep host plugins from rebuilding the same HWS Base Tools Br
 ```text
 BrandColorProvider
 FontFamilyProvider
+TemplateColorResolver
 ```
 
 ## Contract
@@ -33,8 +34,11 @@ FontFamilyProvider
 - `BrandColorProvider::elementor_font_palette()` returns every valid Elementor system/custom typography entry and its global CSS variable.
 - `FontFamilyProvider::options()` returns safe template, native, and unique Elementor font-source choices.
 - `FontFamilyProvider::normalize_selection()` validates a saved source identifier; `css_value()` resolves it for frontend output.
+- `TemplateColorResolver` normalizes Template Default, Site Primary, Site Secondary, and Custom source modes and maps one resolved accent through host-defined CSS variable transforms.
 - `BrandColorProvider::rgb_string($hex)` converts a hex value to `rgb(r, g, b)`.
 - `Hexa\PluginCore\WpAdminComponents\ColorControl::render()` owns the visual picker/hex/RGB/swatch/copy/import control and optional inherited-value state.
+- `Hexa\PluginCore\WpAdminComponents\TemplateColorControl::render()` owns the reusable four-mode source selector, native/site/custom swatches, custom picker, reset action, and live CSS-variable preview.
+- Explicit picker and hex events are resolved before the nested fallback display is synchronized, so host save listeners always receive the newly selected value regardless of script render order.
 - `Hexa\PluginCore\WpAdminComponents\ElementorPaletteDetector::render()` owns the reference-only Elementor palette detector.
 - `Hexa\PluginCore\WpAdminComponents\ColorPalette::render()` owns multi-color saved palettes and can compose the Elementor detector.
 - `Hexa\PluginCore\WpAdminComponents\DetailedColorPicker::render()` owns the paired primary/secondary visual picker and optional font controls.
@@ -44,6 +48,8 @@ FontFamilyProvider
 ## Host Plugin Rule
 
 Host plugins pass setting keys and wire AJAX persistence. Core owns the reusable visual structure and HWS brand color lookup.
+
+For template systems, the host also owns an explicit registry of template palettes and color-bearing CSS variables. Only mapped decorative surfaces may consume those variables. Template Default must emit no override so the original selected template remains exact.
 
 ```php
 use Hexa\PluginCore\BrandColors\BrandColorProvider;
@@ -57,6 +63,39 @@ echo ColorControl::render([
     'value' => $settings['accent_color'] ?? $brand['primary_color'],
     'default' => $brand['primary_color'],
     'import_brand' => true,
+]);
+```
+
+## Template Color Control
+
+Use `TemplateColorControl::render()` for selectable designs that need the same color flow everywhere:
+
+- Template Default: emit no override and preserve the selected template exactly.
+- Site Primary: map the HWS Brand Assets primary color to the registered decorative surfaces.
+- Site Secondary: map the HWS Brand Assets secondary color to those surfaces.
+- Custom: map one saved custom accent to those surfaces; a blank custom value previews the selected template's native accent.
+
+```php
+use Hexa\PluginCore\WpAdminComponents\TemplateColorControl;
+
+echo TemplateColorControl::render([
+    'source_key'   => 'card_color_source',
+    'source'       => $settings['card_color_source'] ?? 'template_default',
+    'custom_key'   => 'card_accent_color',
+    'custom'       => $settings['card_accent_color'] ?? '',
+    'template_key' => 'card_template',
+    'template'     => $settings['card_template'] ?? 'card-a',
+    'palettes'     => [
+        'card-a' => [ 'accent' => '#2563eb' ],
+        'card-b' => [ 'accent' => '#d63428' ],
+    ],
+    'variables'    => [
+        '--example-accent' => 'color',
+        '--example-tint'   => 'rgba:0.10',
+        '--example-ink'    => 'contrast',
+    ],
+    'input_class'  => 'example-setting',
+    'preview_scope'=> '.example-preview',
 ]);
 ```
 

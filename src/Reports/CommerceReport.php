@@ -235,7 +235,7 @@ final class CommerceReport {
         $woocommerce_ready = class_exists( 'WooCommerce' ) && function_exists( 'wc_get_product' );
         $checks[] = $this->check( 'Runtime ownership', SettingsRepository::runtime_enabled(), 'The plugin runtime owns commerce hooks.', 'The plugin is installed in observation mode.' );
         $checks[] = $this->check( 'WooCommerce', $woocommerce_ready, 'WooCommerce is active.', 'WooCommerce is missing.' );
-        $checks[] = $this->check( 'ACF Pro', function_exists( 'acf_add_local_field_group' ), 'Plugin-owned billing field groups can register.', 'ACF is unavailable; billing values still work through user meta.', 'warn' );
+        $checks[] = $this->check( 'Custom fields', true, 'Plugin-owned billing field groups register (' . \Hexa\PluginCore\Fields\Acf::mode() . ').', '', 'warn' );
 
         $checkout_id      = absint( get_option( 'woocommerce_checkout_page_id', SettingsRepository::get( 'checkout_page_id', 0 ) ) );
         $checkout_content = $checkout_id ? (string) get_post_field( 'post_content', $checkout_id ) : '';

@@ -35,12 +35,20 @@ function esc_attr( mixed $value ): string {
 function esc_html( mixed $value ): string {
     return htmlspecialchars( (string) $value, ENT_QUOTES, "UTF-8" );
 }
+function selected( mixed $selected, mixed $current = true, bool $display = true ): string {
+    $result = $selected == $current ? ' selected="selected"' : '';
+    if ( $display ) {
+        echo $result;
+    }
+    return $result;
+}
 
 $root = dirname( __DIR__ );
 require $root . "/src/BrandColors/BrandColorProvider.php";
 require $root . "/src/BrandColors/FontFamilyProvider.php";
 require $root . "/src/BrandColors/FontWeightProvider.php";
 require $root . "/src/Typography/TypographyPreservation.php";
+require $root . "/src/Typography/TemplateTypography.php";
 require $root . "/src/WpAdminComponents/CoreUi.php";
 require $root . "/src/WpAdminComponents/ColorControl.php";
 require $root . "/src/WpAdminComponents/FontFamilyControl.php";
@@ -65,6 +73,7 @@ $markup = TypographyControl::render(
             "article_heading_color" => "#942929",
             "article_heading_h2_size" => 28,
             "article_heading_h3_size" => 22,
+            "article_heading_font_style" => "italic",
             "article_heading_preserve_font_family" => true,
         ],
         "defaults" => false,
@@ -87,6 +96,10 @@ $markup = TypographyControl::render(
             [ "key" => "article_heading_h2_size", "label" => "H2 size", "min" => 8, "max" => 64, "suffix" => "px" ],
             [ "key" => "article_heading_h3_size", "label" => "H3 size", "min" => 8, "max" => 64, "suffix" => "px" ],
         ],
+        "font_style" => [
+            "key" => "article_heading_font_style",
+            "label" => "Heading style",
+        ],
     ]
 );
 
@@ -98,6 +111,8 @@ typography_control_assert( preg_match( '/data-hpc-color-control.*data-hpc-typogr
 typography_control_assert( preg_match( '/hpc-color-head.*hpc-color-head-action.*data-hpc-typography-property="font_color"/s', $markup ) === 1, "The color preservation toggle must remain attached to the color heading at narrow widths." );
 typography_control_assert( str_contains( $markup, 'data-hpc-typography-targets=""' ), "Decorative accent controls may stay active while text color is preserved." );
 typography_control_assert( str_contains( $markup, 'data-hpc-typography-targets="article_heading_h2_size,article_heading_h3_size"' ), "One size toggle must own every configured size field." );
+typography_control_assert( str_contains( $markup, 'data-hpc-typography-targets="article_heading_font_family,article_heading_font_style"' ), "Using the site font must also disable every font-style field governed by that setting." );
+typography_control_assert( str_contains( $markup, '.hpc-typography-control-action{align-items:center;display:flex;grid-row:1;justify-content:flex-start' ) && str_contains( $markup, '.hpc-font-family-field-action{grid-row:1;justify-content:flex-start' ), "Every inheritance toggle must align at the left before its value editor." );
 typography_control_assert( 2 === substr_count( $markup, 'class="hpc-typography-number-input host-save-setting"' ), "Core must render both host-saveable size fields." );
 typography_control_assert( ! str_contains( (string) file_get_contents( $root . "/src/WpAdminComponents/TypographyControl.php" ), "smpi-" ), "The combined typography component must remain host-neutral." );
 

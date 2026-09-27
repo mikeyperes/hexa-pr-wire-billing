@@ -18,15 +18,15 @@ final class TypographyPreservationControl {
         $targets = isset( $args["targets"] ) && is_array( $args["targets"] ) ? $args["targets"] : [];
         $labels = array_merge(
             [
-                "font_family" => "Leave font as is",
-                "font_size" => "Leave font size as is",
-                "font_color" => "Leave font color as is",
-                "font_weight" => "Leave font weight as is",
+                "font_family" => "Use site font",
+                "font_size" => "Use site text size",
+                "font_color" => "Use site text color",
+                "font_weight" => "Use site font weight",
             ],
             isset( $args["labels"] ) && is_array( $args["labels"] ) ? $args["labels"] : []
         );
-        $title = (string) ( $args["title"] ?? "Keep current typography" );
-        $description = (string) ( $args["description"] ?? "Preserve selected typography values while applying the template design." );
+        $title = (string) ( $args["title"] ?? "Site typography" );
+        $description = (string) ( $args["description"] ?? "Turn on a site value to inherit it instead of applying the custom value." );
         $input_class = trim( "hpc-typography-preserve-setting " . (string) ( $args["input_class"] ?? "" ) );
         $control_class = trim( "hpc-typography-preservation-control " . (string) ( $args["control_class"] ?? "" ) );
 
@@ -62,10 +62,10 @@ final class TypographyPreservationControl {
         }
 
         $labels = [
-            "font_family" => "Leave font as is",
-            "font_size" => "Leave font size as is",
-            "font_color" => "Leave font color as is",
-            "font_weight" => "Leave font weight as is",
+            "font_family" => "Use site font",
+            "font_size" => "Use site text size",
+            "font_color" => "Use site text color",
+            "font_weight" => "Use site font weight",
         ];
         $setting_key = TypographyPreservation::setting_key( $prefix, $property );
         $target_keys = array_values( array_filter( array_map( 'sanitize_key', (array) ( $args["targets"] ?? [] ) ) ) );
@@ -96,8 +96,8 @@ final class TypographyPreservationControl {
         }
         $rendered = true;
         return <<<'HTML'
-<style>.hpc-typography-preservation-control{border:1px solid #d8dee8;border-radius:6px;display:grid;gap:12px;padding:14px}.hpc-typography-preservation-head h3{font-size:14px;letter-spacing:0;margin:0 0 4px}.hpc-typography-preservation-head p{color:#64748b;margin:0}.hpc-typography-preservation-toggles{display:grid;gap:9px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}.hpc-typography-preservation-toggle{margin:0}</style>
-<script>(function(){if(window.hexaTypographyPreservationReady)return;window.hexaTypographyPreservationReady=true;function clean(value){return String(value||"").toLowerCase().replace(/_/g,"-").replace(/[^a-z0-9-]/g,"")}function formControls(scope,key){if(!scope||!key)return[];key=key.replace(/"/g,"");var nodes=Array.from(scope.querySelectorAll('[data-key="'+key+'"]')).filter(function(node){return node.matches("input,select,textarea")});scope.querySelectorAll('[data-hpc-color-control][data-key="'+key+'"]').forEach(function(control){nodes=nodes.concat(Array.from(control.querySelectorAll("[data-hpc-color-picker],[data-hpc-color-hex-input],[data-hpc-color-value-input],[data-hpc-brand-color-import],[data-hpc-color-inherit]")))});return nodes.filter(function(node,index){return!node.matches("[data-hpc-typography-preserve-setting]")&&nodes.indexOf(node)===index})}function sync(control){if(!control)return;var prefix=clean(control.getAttribute("data-hpc-typography-prefix")),scope=control.closest("[data-hpc-typography-scope]")||control.parentElement;control.querySelectorAll("[data-hpc-typography-preserve-setting]").forEach(function(input){var property=clean(input.getAttribute("data-hpc-typography-property")),preserve=!!input.checked,className="hpc-typography-"+prefix+"-preserve-"+property;if(scope)scope.classList.toggle(className,preserve);String(input.getAttribute("data-hpc-typography-targets")||"").split(",").filter(Boolean).forEach(function(key){formControls(scope,key).forEach(function(target){if(target===input)return;target.disabled=preserve;target.setAttribute("aria-disabled",preserve?"true":"false")})});document.dispatchEvent(new CustomEvent("hexa-typography-preserve-change",{detail:{control:control,prefix:prefix,property:property,preserve:preserve,scope:scope}}))})}function init(root){(root||document).querySelectorAll("[data-hpc-typography-control]").forEach(sync)}document.addEventListener("change",function(event){var input=event.target.closest("[data-hpc-typography-preserve-setting]");if(input)sync(input.closest("[data-hpc-typography-control]"))});document.addEventListener("hexa-core-host-tab-loaded",function(event){init(event.detail&&event.detail.panel?event.detail.panel:document)});window.hexaPluginCoreInitTypographyPreservation=init;if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",function(){init(document)});else init(document)})();</script>
+<style>.hpc-typography-preservation-control{border:1px solid #d8dee8;border-radius:6px;display:grid;gap:12px;padding:14px}.hpc-typography-preservation-head h3{font-size:14px;letter-spacing:0;margin:0 0 4px}.hpc-typography-preservation-head p{color:#64748b;margin:0}.hpc-typography-preservation-toggles{display:grid;gap:9px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}.hpc-typography-preservation-toggle{margin:0}.hpc-typography-value-inherited{filter:grayscale(1);opacity:.45;pointer-events:none}</style>
+<script>(function(){if(window.hexaTypographyPreservationReady)return;window.hexaTypographyPreservationReady=true;function clean(value){return String(value||"").toLowerCase().replace(/_/g,"-").replace(/[^a-z0-9-]/g,"")}function formControls(scope,key){if(!scope||!key)return[];key=key.replace(/"/g,"");var nodes=Array.from(scope.querySelectorAll('[data-key="'+key+'"]')).filter(function(node){return node.matches("input,select,textarea")});scope.querySelectorAll('[data-hpc-color-control][data-key="'+key+'"]').forEach(function(colorControl){nodes=nodes.concat(Array.from(colorControl.querySelectorAll("[data-hpc-color-picker],[data-hpc-color-hex-input],[data-hpc-color-value-input],[data-hpc-brand-color-import],[data-hpc-color-inherit]")))});return nodes.filter(function(node,index){return!node.matches("[data-hpc-typography-preserve-setting],[data-hpc-typography-mode-setting]")&&nodes.indexOf(node)===index})}function valueRegion(target){if(!target||!target.closest)return null;return target.closest(".hpc-color-row,.hpc-font-family-field,.hpc-typography-number-control,.hpc-typography-style-field")}function setTargetState(target,disabled){if(!target)return;target.disabled=disabled;target.setAttribute("aria-disabled",disabled?"true":"false");var region=valueRegion(target);if(region){region.classList.toggle("hpc-typography-value-inherited",disabled);region.setAttribute("aria-disabled",disabled?"true":"false")}}function mode(control){var input=control?control.querySelector("[data-hpc-typography-mode-setting]:checked"):null;return input?input.value:"custom"}function sync(control){if(!control)return;var prefix=clean(control.getAttribute("data-hpc-typography-prefix")),scope=control.closest("[data-hpc-typography-scope]")||control.parentElement,currentMode=mode(control),modeClass="hpc-typography-"+prefix+"-mode-"+clean(currentMode);if(scope){["template-default","site-inherit","custom"].forEach(function(item){scope.classList.remove("hpc-typography-"+prefix+"-mode-"+item)});scope.classList.add(modeClass)}control.querySelectorAll("[data-hpc-typography-preserve-setting]").forEach(function(input){var property=clean(input.getAttribute("data-hpc-typography-property")),preserve=currentMode==="site_inherit"?true:(currentMode==="template_default"?false:!!input.checked),className="hpc-typography-"+prefix+"-preserve-"+property;if(scope)scope.classList.toggle(className,preserve);input.disabled=currentMode!=="custom";input.setAttribute("aria-disabled",currentMode!=="custom"?"true":"false");String(input.getAttribute("data-hpc-typography-targets")||"").split(",").filter(Boolean).forEach(function(key){formControls(scope,key).forEach(function(target){if(target!==input)setTargetState(target,currentMode!=="custom"||preserve)})});document.dispatchEvent(new CustomEvent("hexa-typography-preserve-change",{detail:{control:control,prefix:prefix,property:property,preserve:preserve,mode:currentMode,scope:scope}}))})}function init(root){var controls=[];if(root&&root.matches&&root.matches("[data-hpc-typography-control]"))controls.push(root);if(root&&root.querySelectorAll)controls=controls.concat(Array.from(root.querySelectorAll("[data-hpc-typography-control]")));controls.forEach(sync)}document.addEventListener("change",function(event){var input=event.target.closest("[data-hpc-typography-preserve-setting],[data-hpc-typography-mode-setting]");if(input)sync(input.closest("[data-hpc-typography-control]"))});document.addEventListener("hexa-core-host-tab-loaded",function(event){init(event.detail&&event.detail.panel?event.detail.panel:document)});window.hexaPluginCoreInitTypographyPreservation=init;if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",function(){init(document)});else init(document)})();</script>
 HTML;
     }
 }

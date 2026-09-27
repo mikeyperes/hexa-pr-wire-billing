@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.0 - 2026-09-27
+
+- Remove the ACF Pro requirement: customer pricing and fulfillment field groups, their registration and diagnostics run on Hexa WP Core 3.4.9 `Fields` (ACF when active, native otherwise). The ACF Pro warning notice and status rows are replaced by the active field mode.
+- Bundle Hexa WP Core 3.4.9 (from 0.19.73).
+
 ## 1.0.5 - 2026-07-29
 
 - Add read-only Service Order Portal provenance to the post editor, including purchase time, visible price, Stripe invoice ID, billing mode, and service.

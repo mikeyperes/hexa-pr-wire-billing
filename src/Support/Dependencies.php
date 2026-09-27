@@ -9,10 +9,6 @@ final class Dependencies {
         return class_exists( 'WooCommerce' ) && function_exists( 'wc_get_orders' );
     }
 
-    public static function acf_active(): bool {
-        return function_exists( 'acf_add_local_field_group' );
-    }
-
     public function register(): void {
         add_action( 'admin_notices', [ $this, 'render_notices' ] );
     }
@@ -27,14 +23,6 @@ final class Dependencies {
                 . esc_html__( 'Hexa PR Wire Billing requires WooCommerce.', 'hexa-pr-wire-billing' )
                 . '</strong> '
                 . esc_html__( 'Its commerce runtime is not registered while WooCommerce is unavailable.', 'hexa-pr-wire-billing' )
-                . '</p></div>';
-        }
-
-        if ( ! self::acf_active() ) {
-            echo '<div class="notice notice-warning"><p><strong>'
-                . esc_html__( 'Hexa PR Wire Billing: ACF Pro is unavailable.', 'hexa-pr-wire-billing' )
-                . '</strong> '
-                . esc_html__( 'Existing metadata remains readable, but the managed customer pricing field interface is not registered.', 'hexa-pr-wire-billing' )
                 . '</p></div>';
         }
     }
