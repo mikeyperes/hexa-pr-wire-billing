@@ -87,10 +87,9 @@ final class FeatureDefinitions {
                 'acf_fields',
                 'Plugin-owned ACF billing fields',
                 'fields',
-                'Registers customer pricing, custom services, card access, and fulfillment linkage with stable local field keys.',
-                'group_hpr_billing_customer_settings and group_hpr_billing_order_linkage',
-                static fn(): bool => (bool) \Hexa\PluginCore\Fields\FieldGroups::get_group( 'group_hpr_billing_customer_settings' )
-                    && (bool) \Hexa\PluginCore\Fields\FieldGroups::get_group( 'group_hpr_billing_order_linkage' )
+                'Registers fulfillment linkage with stable local field keys. Customer pricing, custom services and card access are edited in the Core profile card.',
+                'group_hpr_billing_order_linkage',
+                static fn(): bool => (bool) \Hexa\PluginCore\Fields\FieldGroups::get_group( 'group_hpr_billing_order_linkage' )
             ),
         ];
     }

@@ -70,6 +70,7 @@ final class Plugin {
         return [
             new Commerce\Cache\PersonalizedPageCache(),
             new Fields\AcfFields(),
+            new Admin\CustomerBillingPanel(),
             new Commerce\Cart\ManagedCart(),
             new Commerce\Checkout\CheckoutFields(),
             new Commerce\Payments\GatewayPolicy(),

@@ -5,7 +5,6 @@ namespace HexaPrWire\Billing\Fields;
 use HexaPrWire\Billing\Settings\SettingsRepository;
 
 final class AcfFields {
-    public const CUSTOMER_GROUP = 'group_hpr_billing_customer_settings';
     public const ORDER_GROUP    = 'group_hpr_billing_order_linkage';
 
     public function register(): void {
@@ -25,67 +24,6 @@ final class AcfFields {
     }
 
     public function register_groups(): void {
-        \Hexa\PluginCore\Fields\FieldGroups::add(
-            [
-                'key'      => self::CUSTOMER_GROUP,
-                'title'    => 'Hexa PR Wire Billing',
-                'fields'   => [
-                    [
-                        'key'           => 'field_hpr_billing_standard_price',
-                        'label'         => 'Standard Release Price',
-                        'name'          => 'billing_price_standard_release',
-                        'type'          => 'number',
-                        'instructions'  => 'Leave empty to use the public product price.',
-                        'min'           => 0,
-                        'step'          => '0.01',
-                        'prepend'       => '$',
-                    ],
-                    [
-                        'key'          => 'field_hpr_billing_custom_services',
-                        'label'        => 'Custom Services',
-                        'name'         => 'billing_custom_services',
-                        'type'         => 'repeater',
-                        'layout'       => 'table',
-                        'button_label' => 'Add Service',
-                        'sub_fields'   => [
-                            [
-                                'key'      => 'field_hpr_billing_custom_service_name',
-                                'label'    => 'Name',
-                                'name'     => 'name',
-                                'type'     => 'text',
-                                'required' => 1,
-                            ],
-                            [
-                                'key'      => 'field_hpr_billing_custom_service_price',
-                                'label'    => 'Price',
-                                'name'     => 'price',
-                                'type'     => 'number',
-                                'required' => 1,
-                                'min'      => 0.01,
-                                'step'     => '0.01',
-                                'prepend'  => '$',
-                            ],
-                        ],
-                    ],
-                    [
-                        'key'           => 'field_hpr_billing_allow_credit_card',
-                        'label'         => 'Allow Credit Card',
-                        'name'          => 'billing_allow_credit_card',
-                        'type'          => 'true_false',
-                        'ui'            => 1,
-                        'default_value' => 0,
-                    ],
-                ],
-                'location' => [
-                    [
-                        [ 'param' => 'user_role', 'operator' => '==', 'value' => 'all' ],
-                        [ 'param' => 'current_user_role', 'operator' => '==', 'value' => 'administrator' ],
-                    ],
-                ],
-                'active'   => true,
-            ]
-        );
-
         \Hexa\PluginCore\Fields\FieldGroups::add(
             [
                 'key'      => self::ORDER_GROUP,

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1 - 2026-10-06
+
+- Customer billing settings (standard price, credit card, custom services) moved from the separate "Hexa PR Wire Billing" field group into Core's "Publications, pricing & payment" profile card (`CustomerBillingPanel`). Meta keys are unchanged.
+
 ## 1.1.0 - 2026-09-27
 
 - Remove the ACF Pro requirement: customer pricing and fulfillment field groups, their registration and diagnostics run on Hexa WP Core 3.4.9 `Fields` (ACF when active, native otherwise). The ACF Pro warning notice and status rows are replaced by the active field mode.

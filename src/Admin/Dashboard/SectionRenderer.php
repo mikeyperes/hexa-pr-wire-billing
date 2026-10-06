@@ -322,22 +322,6 @@ final class SectionRenderer {
         echo ( new FieldStructureRenderer() )->render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
             [
                 [
-                    'id'            => 'billing_customer_settings',
-                    'label'         => 'Customer billing settings',
-                    'type'          => 'acf',
-                    'description'   => 'Per-account standard pricing, custom service rows, and card access.',
-                    'setting_key'   => SettingsRepository::FEATURE_OPTIONS['acf_fields'],
-                    'enabled'       => $enabled,
-                    'registered'    => static fn(): bool => \Hexa\PluginCore\Fields\Field::available() && (bool) \Hexa\PluginCore\Fields\FieldGroups::get_group( AcfFields::CUSTOMER_GROUP ),
-                    'acf_group_key' => AcfFields::CUSTOMER_GROUP,
-                    'object_name'   => 'user',
-                    'location'      => 'User edit screen for administrators',
-                    'fields'        => [ 'billing_price_standard_release', 'billing_custom_services', 'billing_allow_credit_card' ],
-                    'dependencies'  => [ 'WordPress user metadata' ],
-                    'instructions'  => 'Edit a customer account in Users. Empty standard pricing falls back to the mapped product price.',
-                    'test_report'   => 'Custom fields run on ' . \Hexa\PluginCore\Fields\Acf::mode() . '; registration is reported above.',
-                ],
-                [
                     'id'            => 'billing_fulfillment_linkage',
                     'label'         => 'Fulfillment linkage',
                     'type'          => 'acf',

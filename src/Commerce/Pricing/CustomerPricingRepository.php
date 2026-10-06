@@ -78,6 +78,44 @@ final class CustomerPricingRepository {
         return $product ? $this->positive_decimal( $product->get_price() ) : null;
     }
 
+    /**
+     * Stores the customer's billing settings in the stable meta contract
+     * (billing_custom_services uses the ACF repeater layout readers expect).
+     *
+     * @param array<int,array{name:string,price:string}> $services
+     */
+    public function save_settings( int $user_id, string $standard_price, bool $card_allowed, array $services ): void {
+        if ( $user_id <= 0 ) {
+            return;
+        }
+
+        $standard = $this->positive_decimal( $standard_price );
+        null === $standard
+            ? delete_user_meta( $user_id, 'billing_price_standard_release' )
+            : update_user_meta( $user_id, 'billing_price_standard_release', $standard );
+        update_user_meta( $user_id, 'billing_allow_credit_card', $card_allowed ? '1' : '0' );
+
+        $rows = [];
+        foreach ( $services as $service ) {
+            $name  = sanitize_text_field( (string) ( $service['name'] ?? '' ) );
+            $price = $this->positive_decimal( $service['price'] ?? '' );
+            if ( '' !== $name && null !== $price && count( $rows ) < self::MAX_SERVICES ) {
+                $rows[] = [ 'name' => $name, 'price' => $price ];
+            }
+        }
+
+        $old_count = min( self::MAX_SERVICES, max( 0, (int) get_user_meta( $user_id, 'billing_custom_services', true ) ) );
+        for ( $index = count( $rows ); $index < $old_count; $index++ ) {
+            delete_user_meta( $user_id, 'billing_custom_services_' . $index . '_name' );
+            delete_user_meta( $user_id, 'billing_custom_services_' . $index . '_price' );
+        }
+        update_user_meta( $user_id, 'billing_custom_services', count( $rows ) );
+        foreach ( $rows as $index => $row ) {
+            update_user_meta( $user_id, 'billing_custom_services_' . $index . '_name', $row['name'] );
+            update_user_meta( $user_id, 'billing_custom_services_' . $index . '_price', $row['price'] );
+        }
+    }
+
     private function positive_decimal( mixed $value ): ?string {
         if ( ! is_scalar( $value ) || '' === trim( (string) $value ) || ! is_numeric( $value ) ) {
             return null;
