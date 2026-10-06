@@ -3,6 +3,7 @@
 namespace HexaPrWire\Billing\Admin;
 
 use HexaPrWire\Billing\Commerce\Pricing\CustomerPricingRepository;
+use HexaPrWire\Billing\Commerce\ProductCatalog;
 use HexaPrWire\Billing\Settings\SettingsRepository;
 
 /**
@@ -55,6 +56,7 @@ final class CustomerBillingPanel {
                     <span class="hprwc-billing-help">On: card or ACH bank payment at checkout. Off: ACH bank payment only.</span>
                 </div>
             </div>
+            <?php $this->render_checkout_test( $user ); ?>
         </div>
         <?php
     }
@@ -75,6 +77,29 @@ final class CustomerBillingPanel {
             <p class="hprwc-repeater-empty" hidden>No custom services.</p>
             <template><?php $this->service_row( '', '' ); ?></template>
             <button type="button" class="button" data-repeater-add>Add service</button>
+        </div>
+        <?php
+    }
+
+    /** Opens checkout with a standard release in the cart through Base Tools' existing View As session. */
+    private function render_checkout_test( \WP_User $user ): void {
+        $product_id = ProductCatalog::product_id( ProductCatalog::STANDARD );
+        if ( $product_id <= 0 || ! function_exists( 'wc_get_checkout_url' ) ) {
+            return;
+        }
+        $checkout = add_query_arg( 'add-to-cart', $product_id, wc_get_checkout_url() );
+        $view_as  = '\\HWS\\BaseTools\\UserImpersonation\\ViewAsController';
+        ?>
+        <div class="hprwc-field">
+            <span class="hprwc-label">Test checkout</span>
+            <div class="hprwc-inline">
+                <?php if ( class_exists( $view_as ) && \HWS\BaseTools\UserImpersonation\UserImpersonationFeature::enabled() ) : ?>
+                    <a class="button" href="<?php echo esc_url( $view_as::start_url( (int) $user->ID, $checkout ) ); ?>" target="_blank" rel="noopener noreferrer">Open checkout as <?php echo esc_html( $user->display_name ); ?></a>
+                    <span class="hprwc-billing-help">New tab, signed in as this customer, with a standard release in the cart. Nothing is charged unless you place the order.</span>
+                <?php else : ?>
+                    <span class="hprwc-billing-help">Turn on View As in HWS Base Tools to test checkout as this customer.</span>
+                <?php endif; ?>
+            </div>
         </div>
         <?php
     }

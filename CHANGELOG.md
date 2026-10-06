@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.3 - 2026-10-06
+
+- "Open checkout as <customer>" on the customer profile: opens checkout in a new tab with a standard release in the cart, signed in as that customer through HWS Base Tools' existing View As session.
+
 ## 1.1.2 - 2026-10-06
 
 - Standard price input marks itself as the live default for Core's publication price placeholders.
