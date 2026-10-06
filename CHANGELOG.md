@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.2 - 2026-10-06
+
+- Standard price input marks itself as the live default for Core's publication price placeholders.
+
 ## 1.1.1 - 2026-10-06
 
 - Customer billing settings (standard price, credit card, custom services) moved from the separate "Hexa PR Wire Billing" field group into Core's "Publications, pricing & payment" profile card (`CustomerBillingPanel`). Meta keys are unchanged.

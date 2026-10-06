@@ -44,7 +44,7 @@ final class CustomerBillingPanel {
             <div class="hprwc-field">
                 <label class="hprwc-label" for="hpr_billing_standard_price">Standard price</label>
                 <div class="hprwc-inline">
-                    <span class="hprwc-price"><span aria-hidden="true">$</span><input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]{0,2}" id="hpr_billing_standard_price" name="hpr_billing_standard_price" value="<?php echo esc_attr( $standard ); ?>" placeholder="<?php echo esc_attr( '' !== $store ? $store : 'Store' ); ?>"></span>
+                    <span class="hprwc-price"><span aria-hidden="true">$</span><input type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]{0,2}" id="hpr_billing_standard_price" name="hpr_billing_standard_price" data-hprwc-default-price data-fallback="<?php echo esc_attr( $store ); ?>" value="<?php echo esc_attr( $standard ); ?>" placeholder="<?php echo esc_attr( '' !== $store ? $store : 'Store' ); ?>"></span>
                     <span class="hprwc-billing-help">Per release, unless a publication below has its own price. Empty = store price<?php echo '' !== $store ? esc_html( ' ($' . $store . ')' ) : ''; ?>.</span>
                 </div>
             </div>
