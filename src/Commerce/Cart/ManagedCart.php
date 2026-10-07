@@ -24,6 +24,7 @@ final class ManagedCart {
         add_filter( 'woocommerce_add_cart_item_data', [ $this, 'add_cart_item_data' ], 20, 3 );
         add_action( 'woocommerce_before_calculate_totals', [ $this, 'set_managed_prices' ], 20 );
         add_action( 'woocommerce_check_cart_items', [ $this, 'validate_cart_items' ], 20 );
+        add_filter( 'woocommerce_add_to_cart_validation', [ $this, 'replace_managed_item' ], PHP_INT_MAX, 2 );
         add_action( 'woocommerce_add_to_cart', [ $this, 'enforce_single_item_cart' ], 20, 6 );
         add_filter( 'woocommerce_get_item_data', [ $this, 'display_cart_item_data' ], 20, 2 );
         add_action( 'woocommerce_checkout_create_order_line_item', [ $this, 'save_order_item_data' ], 20, 4 );
@@ -209,6 +210,18 @@ final class ManagedCart {
                 $this->add_error( __( 'A managed billing product does not have a valid server-side price.', 'hexa-pr-wire-billing' ) );
             }
         }
+    }
+
+    /**
+     * A managed product is sold one at a time, so adding it again (reopening a checkout
+     * link, or changing its publication) must replace the cart line instead of failing
+     * with "You cannot add another". Runs after every other validation has passed.
+     */
+    public function replace_managed_item( bool $passed, int $product_id ): bool {
+        if ( $passed && SettingsRepository::feature_enabled( 'single_item_cart' ) && ProductCatalog::is_managed( $product_id ) && WC()->cart ) {
+            WC()->cart->empty_cart();
+        }
+        return $passed;
     }
 
     public function enforce_single_item_cart( string $cart_item_key, int $product_id, int $quantity, int $variation_id, array $variation, array $cart_item_data ): void {

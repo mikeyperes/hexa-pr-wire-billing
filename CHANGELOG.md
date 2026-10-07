@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.4 - 2026-10-07
+
+- One-page checkout: an order card at the top shows the item, its publication and price, and explains that a draft appears in the customer's portal after payment. First and last name each take a full row, and product rows are removed from the lower review table so only totals sit above payment.
+- Adding a managed product that is already in the cart now replaces the line instead of failing with "You cannot add another", so checkout links can be reopened and the publication can be changed.
+
 ## 1.1.3 - 2026-10-06
 
 - "Open checkout as <customer>" on the customer profile: opens checkout in a new tab with a standard release in the cart, signed in as that customer through HWS Base Tools' existing View As session.

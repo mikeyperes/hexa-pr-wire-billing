@@ -12,7 +12,8 @@ final class CheckoutFields {
         }
 
         add_filter( 'woocommerce_checkout_fields', [ $this, 'filter_fields' ], 1000 );
-        add_action( 'woocommerce_before_order_notes', [ $this, 'render_service_summary' ] );
+        add_action( 'woocommerce_checkout_before_customer_details', [ $this, 'render_order_card' ], 5 );
+        add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_assets' ] );
         add_action( 'woocommerce_after_checkout_validation', [ $this, 'validate_fields' ], 20, 2 );
         add_action( 'woocommerce_checkout_create_order', [ $this, 'save_order_fields' ], 20, 2 );
         add_action( 'woocommerce_admin_order_data_after_billing_address', [ $this, 'render_admin_order_fields' ] );
@@ -29,6 +30,12 @@ final class CheckoutFields {
         foreach ( array_keys( $fields['billing'] ?? [] ) as $key ) {
             if ( ! in_array( $key, $allowed_billing, true ) ) {
                 unset( $fields['billing'][ $key ] );
+            }
+        }
+
+        foreach ( [ 'billing_first_name', 'billing_last_name' ] as $key ) {
+            if ( isset( $fields['billing'][ $key ] ) ) {
+                $fields['billing'][ $key ]['class'] = [ 'form-row-wide' ];
             }
         }
 
@@ -59,12 +66,51 @@ final class CheckoutFields {
         return $fields;
     }
 
-    public function render_service_summary( mixed $checkout = null ): void {
+    /** One-page checkout: what is being bought, its price and what happens after payment, above the form. */
+    public function render_order_card( mixed $checkout = null ): void {
         unset( $checkout );
-        $service = $this->service_from_cart();
-        if ( '' !== $service ) {
-            echo '<p class="hpr-billing-checkout-service"><strong>' . esc_html__( 'Custom service:', 'hexa-pr-wire-billing' ) . '</strong> ' . esc_html( $service ) . '</p>';
+        if ( ! ProductCatalog::cart_has_managed_product() ) {
+            return;
         }
+        $items = WC()->cart->get_cart();
+        ?>
+        <section class="hpr-checkout-order" aria-label="<?php echo esc_attr__( 'Your order', 'hexa-pr-wire-billing' ); ?>">
+            <h2 class="hpr-checkout-order__title"><?php echo esc_html__( 'Your order', 'hexa-pr-wire-billing' ); ?></h2>
+            <?php foreach ( $items as $item ) :
+                $product = $item['data'] ?? null;
+                if ( ! $product instanceof \WC_Product ) {
+                    continue;
+                }
+                $details = wc_get_formatted_cart_item_data( $item, true );
+                $service = sanitize_text_field( (string) ( $item['_hpr_billing_service_title'] ?? '' ) );
+                ?>
+                <div class="hpr-checkout-order__item">
+                    <div class="hpr-checkout-order__name">
+                        <strong><?php echo esc_html( '' !== $service ? $service : $product->get_name() ); ?></strong>
+                        <?php if ( '' !== trim( $details ) ) : ?><span class="hpr-checkout-order__meta"><?php echo esc_html( implode( ' · ', array_filter( array_map( 'trim', explode( "\n", $details ) ) ) ) ); ?></span><?php endif; ?>
+                    </div>
+                    <span class="hpr-checkout-order__price"><?php echo wp_kses_post( WC()->cart->get_product_subtotal( $product, (int) $item['quantity'] ) ); ?></span>
+                </div>
+            <?php endforeach; ?>
+            <?php do_action( 'hpr_billing_checkout_order_details', $items ); ?>
+            <div class="hpr-checkout-order__next">
+                <strong><?php echo esc_html__( 'What happens after payment', 'hexa-pr-wire-billing' ); ?></strong>
+                <p><?php echo esc_html__( 'A draft for this release appears in your Hexa PR Wire portal right away. Open it to upload your press release and submit it for review.', 'hexa-pr-wire-billing' ); ?></p>
+            </div>
+        </section>
+        <?php
+    }
+
+    public function enqueue_assets(): void {
+        if ( ! function_exists( 'is_checkout' ) || ! is_checkout() || is_order_received_page() || ! ProductCatalog::cart_has_managed_product() ) {
+            return;
+        }
+        wp_enqueue_style(
+            'hpr-billing-checkout',
+            plugins_url( 'assets/frontend/checkout.css', dirname( __DIR__, 3 ) . '/hexa-pr-wire-billing.php' ),
+            [],
+            \HexaPrWire\Billing\Config::VERSION . '.' . (string) filemtime( dirname( __DIR__, 3 ) . '/assets/frontend/checkout.css' )
+        );
     }
 
     public function validate_fields( array $data, \WP_Error $errors ): void {
