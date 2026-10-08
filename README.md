@@ -4,6 +4,30 @@ Hexa PR Wire Billing owns the bounded commerce domain for `hexaprwire.com`: prod
 
 The plugin is intentionally separate from `hexa-pr-wire-distributor`. Distribution and editorial syndication remain in the distributor plugin; payment and checkout state remain here.
 
+> Feature base for HWS Skills. Read before building on this plugin; use or
+> extend these features instead of rebuilding them.
+
+**Purpose:** Hexa PR Wire commerce: packages, customer pricing, custom services, checkout and fulfilment. **Admin:** WP Admin → Hexa PR Wire Billing; order portal at `admin.php?page=hpr-place-order`. **Depends on:** WooCommerce.
+
+## Features
+
+### Package catalog
+- **Does:** the public package catalog with prices.
+- **Use:** `[hpr_billing_catalog]` (no attributes). The Packages page must bypass full-page cache.
+- **Code:** `src/Commerce/Catalog/CatalogShortcode.php`
+
+### Customer order portal
+- **Does:** after sign-in, the customer's own pricing and custom services.
+- **Use:** `[hpr_billing_order_portal]` (no attributes).
+
+### Checkout fields
+- **Does:** extra release fields on checkout.
+- **Use:** automatic on the WooCommerce checkout.
+- **Code:** `src/Commerce/Checkout/CheckoutFields.php`
+
+### Extension points
+- `hpr_billing_dashboard_tabs`, `hpr_billing_dashboard_tab_groups`, `hpr_billing_dashboard_areas`, `hpr_billing_dashboard_area_sections`, `hpr_billing_dashboard_flat_tabs`, `hpr_billing_render_dashboard_tab`.
+
 ## Runtime Model
 
 Activation does not transfer commerce ownership. The plugin starts in observation mode with `hpr_billing_runtime_enabled` set to false. Its reports and migration preflight are available, but no replacement cart, checkout, payment, ACF, or fulfillment hooks run until the guarded migration completes.
