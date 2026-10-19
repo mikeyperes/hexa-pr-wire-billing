@@ -68,22 +68,6 @@ final class FeatureDefinitions {
                 static fn(): bool => has_action( 'woocommerce_order_status_processing' ) && has_action( 'woocommerce_order_status_completed' )
             ),
             self::definition_array(
-                'order_portal',
-                'Customer order portal',
-                'customer-experience',
-                'Provides the Place an Order wp-admin screen and account-aware service links.',
-                'admin_menu: hpr-place-order',
-                static fn(): bool => class_exists( '\\HexaPrWire\\Billing\\Admin\\OrderPortal' )
-            ),
-            self::definition_array(
-                'catalog',
-                'Billing catalog shortcodes',
-                'customer-experience',
-                'Renders the public package catalog and signed-in account order portal.',
-                '[hpr_billing_catalog] and [hpr_billing_order_portal]',
-                static fn(): bool => shortcode_exists( 'hpr_billing_catalog' ) && shortcode_exists( 'hpr_billing_order_portal' )
-            ),
-            self::definition_array(
                 'acf_fields',
                 'Plugin-owned ACF billing fields',
                 'fields',

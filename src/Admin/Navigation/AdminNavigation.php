@@ -13,7 +13,6 @@ final class AdminNavigation {
         'payments'      => 'Payments',
         'fulfillment'   => 'Fulfillment',
         'pricing'       => 'Pricing',
-        'order_portal'  => 'Order Portal',
         'orders'        => 'Orders',
         'integrity'     => 'Integrity',
         'activity'      => 'Activity',
@@ -42,8 +41,7 @@ final class AdminNavigation {
             'fulfillment' => 'Fulfillment',
         ],
         'customers' => [
-            'pricing'      => 'Pricing',
-            'order_portal' => 'Order Portal',
+            'pricing' => 'Pricing',
         ],
         'reporting' => [
             'orders'    => 'Orders',

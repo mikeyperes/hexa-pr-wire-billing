@@ -14,8 +14,6 @@ final class SettingsRepository {
         'gateway_policy'      => 'hpr_billing_feature_gateway_policy',
         'stripe_descriptions' => 'hpr_billing_feature_stripe_descriptions',
         'fulfillment'         => 'hpr_billing_feature_fulfillment',
-        'order_portal'        => 'hpr_billing_feature_order_portal',
-        'catalog'             => 'hpr_billing_feature_catalog',
         'acf_fields'          => 'hpr_billing_feature_acf_fields',
     ];
 

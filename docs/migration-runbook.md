@@ -36,7 +36,7 @@ Do not submit a real payment during rollout verification.
 2. Confirm snippets 26, 30, 34, 43, and 44 are inactive.
 3. Confirm Flexible Checkout Fields is inactive.
 4. Confirm custom product 323645 has no persisted fallback price.
-5. Confirm Packages renders `[hpr_billing_catalog]` output.
+5. Confirm the Packages page redirects to checkout.
 6. Confirm Submit requires sign-in and renders account services after sign-in.
 7. Confirm the Checkout fallback contains `[woocommerce_checkout]`.
 8. Confirm a guest cannot add custom product 323645, including a direct add-to-cart URL.

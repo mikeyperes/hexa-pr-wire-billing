@@ -41,9 +41,6 @@ final class SectionRenderer {
             case 'pricing':
                 $this->pricing();
                 return;
-            case 'order_portal':
-                $this->order_portal();
-                return;
             case 'orders':
                 $this->orders();
                 return;
@@ -148,8 +145,6 @@ final class SectionRenderer {
                 <div class="hpr-billing-panel__head"><div><h2>Critical pages</h2><p>Configured page IDs and current public targets.</p></div></div>
                 <table class="widefat striped hpr-billing-table"><tbody>
                     <?php $this->page_row( 'Checkout', (int) $settings['checkout_page_id'], $checks['Canonical checkout fallback'] ?? null ); ?>
-                    <?php $this->page_row( 'Packages', (int) $settings['packages_page_id'], $checks['Packages page'] ?? null ); ?>
-                    <?php $this->page_row( 'Submit', (int) $settings['submit_page_id'], $checks['Submit page'] ?? null ); ?>
                 </tbody></table>
             </section>
             <section class="hpr-billing-panel">
@@ -165,7 +160,7 @@ final class SectionRenderer {
         <?php
         $this->settings_form(
             'Page mapping',
-            'The migration validates these pages before replacing their fallback content.',
+            'The Packages and Submit pages redirect to checkout.',
             [
                 'checkout_page_id' => [ 'Checkout page ID', 'number' ],
                 'packages_page_id' => [ 'Packages page ID', 'number' ],
@@ -243,26 +238,6 @@ final class SectionRenderer {
             </section>
         </div>
         <?php
-    }
-
-    private function order_portal(): void {
-        $settings = SettingsRepository::all();
-        ?>
-        <?php $this->section_heading( 'Order portal', 'The public catalog and signed-in order portal share one server-authoritative product and pricing layer.' ); ?>
-        <section class="hpr-billing-panel">
-            <table class="widefat striped hpr-billing-table"><thead><tr><th>Surface</th><th>Shortcode</th><th>Page</th><th></th></tr></thead><tbody>
-                <?php $this->portal_row( 'Public packages', '[hpr_billing_catalog]', (int) $settings['packages_page_id'] ); ?>
-                <?php $this->portal_row( 'Signed-in ordering', '[hpr_billing_order_portal]', (int) $settings['submit_page_id'] ); ?>
-                <tr><th>WP admin ordering</th><td><code>admin.php?page=hpr-place-order</code></td><td>Authenticated users</td><td><a class="button button-small" href="<?php echo esc_url( admin_url( 'admin.php?page=hpr-place-order' ) ); ?>">Open</a></td></tr>
-            </tbody></table>
-        </section>
-        <?php
-        $this->settings_form(
-            'Customer support',
-            'This address appears in the customer order portal and premium quote action.',
-            [ 'support_email' => [ 'Support email', 'email' ] ],
-            $settings
-        );
     }
 
     private function orders(): void {
@@ -452,11 +427,6 @@ final class SectionRenderer {
     private function page_row( string $label, int $page_id, ?array $check ): void {
         $url = $page_id > 0 ? get_permalink( $page_id ) : '';
         ?><tr><th><?php echo esc_html( $label ); ?></th><td><code>#<?php echo absint( $page_id ); ?></code><br><?php echo esc_html( get_the_title( $page_id ) ?: 'Missing page' ); ?></td><td><?php echo $this->status_badge( strtoupper( (string) ( $check['status'] ?? 'fail' ) ), (string) ( $check['status'] ?? 'fail' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td><td><?php if ( $url ) : ?><a class="button button-small" href="<?php echo esc_url( $url ); ?>" target="_blank" rel="noopener">View</a><?php endif; ?></td></tr><?php
-    }
-
-    private function portal_row( string $label, string $shortcode, int $page_id ): void {
-        $url = $page_id > 0 ? get_permalink( $page_id ) : '';
-        ?><tr><th><?php echo esc_html( $label ); ?></th><td><code><?php echo esc_html( $shortcode ); ?></code></td><td>#<?php echo absint( $page_id ); ?> <?php echo esc_html( get_the_title( $page_id ) ?: 'Missing page' ); ?></td><td><?php if ( $url ) : ?><a class="button button-small" href="<?php echo esc_url( $url ); ?>" target="_blank" rel="noopener">View</a><?php endif; ?></td></tr><?php
     }
 
     private function metric( string $label, string $value, string $detail ): void {

@@ -7,18 +7,13 @@ The plugin is intentionally separate from `hexa-pr-wire-distributor`. Distributi
 > Feature base for HWS Skills. Read before building on this plugin; use or
 > extend these features instead of rebuilding them.
 
-**Purpose:** Hexa PR Wire commerce: packages, customer pricing, custom services, checkout and fulfilment. **Admin:** WP Admin → Hexa PR Wire Billing; order portal at `admin.php?page=hpr-place-order`. **Depends on:** WooCommerce.
+**Purpose:** Hexa PR Wire commerce: packages, customer pricing, custom services, checkout and fulfilment. **Admin:** WP Admin → Hexa PR Wire Billing; the "Place an Order" menu item opens checkout in a new tab. **Depends on:** WooCommerce.
 
 ## Features
 
-### Package catalog
-- **Does:** the public package catalog with prices.
-- **Use:** `[hpr_billing_catalog]` (no attributes). The Packages page must bypass full-page cache.
-- **Code:** `src/Commerce/Catalog/CatalogShortcode.php`
-
-### Customer order portal
-- **Does:** after sign-in, the customer's own pricing and custom services.
-- **Use:** `[hpr_billing_order_portal]` (no attributes).
+### Ordering
+- **Does:** checkout is the only order page. The wp-admin "Place an Order" item opens it in a new tab with a standard release in the cart, and the Packages and Submit pages redirect to it.
+- **Code:** `src/Commerce/Checkout/OrderEntry.php`
 
 ### Checkout fields
 - **Does:** extra release fields on checkout.
@@ -95,9 +90,7 @@ Managed payment gateways are allowlisted to ACH and, only for entitled accounts,
 
 ## Customer Surfaces
 
-- `[hpr_billing_catalog]` renders the public package catalog.
-- `[hpr_billing_order_portal]` requires sign-in before displaying account pricing and custom services.
-- `wp-admin/admin.php?page=hpr-place-order` provides the authenticated admin order portal.
+- WooCommerce checkout is the only ordering surface. The wp-admin "Place an Order" item opens it in a new tab; the Packages and Submit pages redirect to it.
 
 The mapped Packages, Submit, and Checkout pages explicitly bypass full-page caches. This prevents guest catalog output from hiding signed-in prices and custom-service entitlements.
 

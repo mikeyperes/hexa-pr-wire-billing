@@ -21,7 +21,6 @@ $GLOBALS['hpr_test_options'] = [
     'hpr_billing_feature_gateway_policy'         => true,
     'hpr_billing_feature_stripe_descriptions'    => true,
     'hpr_billing_feature_fulfillment'            => true,
-    'hpr_billing_feature_order_portal'            => true,
     'hpr_billing_feature_catalog'                 => true,
     'hpr_billing_feature_acf_fields'              => true,
     'woocommerce_stripe_upm_settings'             => [ 'enabled' => 'yes' ],
@@ -276,8 +275,6 @@ $migrated = true === get_option( 'hpr_billing_runtime_enabled' )
     && '' === $GLOBALS['hpr_test_products'][323645]['price']
     && false === $GLOBALS['hpr_test_plugins']['flexible-checkout-fields/flexible-checkout-fields.php']
     && str_contains( $GLOBALS['hpr_test_pages'][81]['content'], '[woocommerce_checkout]' )
-    && str_contains( $GLOBALS['hpr_test_pages'][41]['content'], '[hpr_billing_catalog]' )
-    && str_contains( $GLOBALS['hpr_test_pages'][261050]['content'], '[hpr_billing_order_portal]' )
     && '1' === (string) ( $backup['custom_product']['price'] ?? '' )
     && ! array_key_exists( 'hpr_billing_migration_lock', $GLOBALS['hpr_test_options'] );
 foreach ( $GLOBALS['wpdb']->snippets as $snippet ) {

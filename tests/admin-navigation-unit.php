@@ -35,7 +35,7 @@ if ( array_keys( $areas ) !== [ 'overview', 'commerce', 'customers', 'reporting'
     exit( 1 );
 }
 
-if ( array_keys( $tabs ) !== [ 'overview', 'catalog', 'checkout', 'payments', 'fulfillment', 'pricing', 'order_portal', 'orders', 'integrity', 'activity', 'features', 'custom_fields', 'git_updates', 'hexa_core', 'extension_diagnostics' ] ) {
+if ( array_keys( $tabs ) !== [ 'overview', 'catalog', 'checkout', 'payments', 'fulfillment', 'pricing', 'orders', 'integrity', 'activity', 'features', 'custom_fields', 'git_updates', 'hexa_core', 'extension_diagnostics' ] ) {
     fwrite( STDERR, "FAIL: Core sidebar tabs are not in the expected order.\n" );
     exit( 1 );
 }

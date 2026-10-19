@@ -241,14 +241,6 @@ final class CommerceReport {
         $checkout_content = $checkout_id ? (string) get_post_field( 'post_content', $checkout_id ) : '';
         $checks[] = $this->check( 'Canonical checkout fallback', str_contains( $checkout_content, '[woocommerce_checkout]' ), 'The checkout page has a canonical WooCommerce shortcode fallback.', 'The checkout page content is a saved render instead of a canonical shortcode.' );
 
-        $packages_id      = absint( SettingsRepository::get( 'packages_page_id', 0 ) );
-        $packages_content = $packages_id ? (string) get_post_field( 'post_content', $packages_id ) : '';
-        $checks[] = $this->check( 'Packages page', str_contains( $packages_content, '[hpr_billing_catalog' ), 'The packages page is owned by the billing catalog.', 'The packages page has no billing catalog.' );
-
-        $submit_id      = absint( SettingsRepository::get( 'submit_page_id', 0 ) );
-        $submit_content = $submit_id ? (string) get_post_field( 'post_content', $submit_id ) : '';
-        $checks[] = $this->check( 'Submit page', str_contains( $submit_content, '[hpr_billing_order_portal' ), 'The submit page routes customers into the account order portal.', 'The submit page does not expose the billing order portal.', 'warn' );
-
         $active_legacy = array_filter( $this->legacy_snippets(), static fn( array $row ): bool => ! empty( $row['active'] ) );
         $checks[] = $this->check( 'Legacy commerce snippets', [] === $active_legacy, 'Legacy commerce snippets are disabled.', count( $active_legacy ) . ' legacy commerce snippets are still active.' );
 

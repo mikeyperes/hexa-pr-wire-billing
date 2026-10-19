@@ -70,7 +70,6 @@ $GLOBALS['hpr_test_options'] = [
     'hpr_billing_feature_gateway_policy'      => true,
     'hpr_billing_feature_stripe_descriptions' => true,
     'hpr_billing_feature_fulfillment'         => true,
-    'hpr_billing_feature_order_portal'        => true,
     'hpr_billing_feature_catalog'             => true,
     'hpr_billing_feature_acf_fields'          => true,
     'woocommerce_stripe_upm_settings'         => [ 'enabled' => 'yes' ],

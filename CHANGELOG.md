@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.0 - 2026-10-19
+
+- Remove the Place an Order catalog: the wp-admin order page, the `[hpr_billing_catalog]` and `[hpr_billing_order_portal]` shortcodes, their stylesheet, the Order Portal tab and both feature switches. Checkout is now the only order page.
+- The "Place an Order" menu item opens checkout in a new tab with a standard release in the cart, so the customer picks the publication and pays on one page.
+- The Packages and Submit pages redirect to that checkout.
+
 ## 1.1.4 - 2026-10-07
 
 - One-page checkout: an order card at the top shows the item, its publication and price, and explains that a draft appears in the customer's portal after payment. First and last name each take a full row, and product rows are removed from the lower review table so only totals sit above payment.

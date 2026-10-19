@@ -278,8 +278,6 @@ final class LegacyCommerceMigration {
         $pages   = $this->target_pages();
         $targets = [
             $pages['Checkout'] => "<!-- wp:shortcode -->\n[woocommerce_checkout]\n<!-- /wp:shortcode -->",
-            $pages['Packages'] => "<!-- wp:shortcode -->\n[hpr_billing_catalog]\n<!-- /wp:shortcode -->",
-            $pages['Submit']   => "<!-- wp:shortcode -->\n[hpr_billing_order_portal]\n<!-- /wp:shortcode -->",
         ];
         $results = [];
         foreach ( $targets as $page_id => $content ) {

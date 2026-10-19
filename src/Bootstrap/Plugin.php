@@ -50,7 +50,6 @@ final class Plugin {
             $core->add_module( $this->core_tab_module() );
             $core->add_module( new ModuleAdapter( new Admin\Ajax() ) );
             $core->add_module( new ModuleAdapter( new Admin\Dashboard() ) );
-            $core->add_module( new ModuleAdapter( new Admin\OrderPortal() ) );
         }
 
         $core->boot();
@@ -76,7 +75,7 @@ final class Plugin {
             new Commerce\Payments\GatewayPolicy(),
             new Commerce\Payments\StripeDescription(),
             new Commerce\Fulfillment\OrderFulfillment(),
-            new Commerce\Catalog\CatalogShortcode(),
+            new Commerce\Checkout\OrderEntry(),
         ];
     }
 

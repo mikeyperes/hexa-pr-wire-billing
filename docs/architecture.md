@@ -24,7 +24,7 @@ Commerce modules expose `register()` and are adapted to Core `ModuleInterface`. 
 - `Commerce\Payments\GatewayPolicy`: account-specific Stripe card access while preserving ACH.
 - `Commerce\Payments\StripeDescription`: one bounded payment-intent description.
 - `Commerce\Fulfillment\OrderFulfillment`: locked, idempotent order-to-draft creation and linkage.
-- `Commerce\Catalog\CatalogShortcode`: public and signed-in ordering surfaces.
+- `Commerce\Checkout\OrderEntry`: the "Place an Order" admin link and the Packages/Submit redirects, all to checkout.
 - `Fields\AcfFields`: stable local groups over existing metadata names.
 - `Reports\CommerceReport`: Woo CRUD reports, aggregate pricing reports, and integrity checks.
 - `Migration\LegacyCommerceMigration`: preflighted ownership transfer and rollback.
