@@ -31,6 +31,11 @@ final class OrderFulfillment {
             return $existing;
         }
 
+        $release = ReleaseLink::from_order( $order );
+        if ( $release > 0 && 'post' === get_post_type( $release ) && 'trash' !== get_post_status( $release ) ) {
+            return $this->attach_release( $order, $release );
+        }
+
         $lock = 'hpr_billing_fulfillment_lock_' . $order_id;
         if ( ! $this->acquire_lock( $lock ) ) {
             return new \WP_Error( 'fulfillment_locked', 'Fulfillment is already running for this order.' );
@@ -51,6 +56,21 @@ final class OrderFulfillment {
         } finally {
             delete_option( $lock );
         }
+    }
+
+    /** Links a payment to a release that already exists; title and content are kept. */
+    public function attach_release( \WC_Order $order, int $post_id ): int {
+        $this->save_post_linkage(
+            $post_id,
+            $order,
+            sanitize_text_field( (string) $order->get_meta( '_order_press_release_title' ) ),
+            sanitize_text_field( (string) $order->get_meta( '_order_service_title' ) )
+        );
+        $this->link_order( $order, $post_id, false );
+        $order->add_order_note( 'Hexa PR Wire payment linked to existing release: post #' . $post_id . '.' );
+        CommerceReport::clear_cache();
+        Activity::add( 'Linked a payment to an existing release.', 'success', [ 'order_id' => $order->get_id(), 'post_id' => $post_id ], 'fulfillment' );
+        return $post_id;
     }
 
     private function existing_post_id( \WC_Order $order ): int {

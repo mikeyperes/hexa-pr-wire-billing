@@ -2,6 +2,7 @@
 
 namespace HexaPrWire\Billing\Commerce\Cart;
 
+use HexaPrWire\Billing\Commerce\Fulfillment\ReleaseLink;
 use HexaPrWire\Billing\Commerce\Pricing\CustomerPricingRepository;
 use HexaPrWire\Billing\Commerce\ProductCatalog;
 use HexaPrWire\Billing\Settings\SettingsRepository;
@@ -129,6 +130,10 @@ final class ManagedCart {
         $cart_item_data['_hpr_billing_kind']    = $kind;
         $cart_item_data['_hpr_billing_price']   = $price;
         $cart_item_data['_hpr_billing_user_id'] = $user_id;
+        $release = ProductCatalog::STANDARD === $kind ? ReleaseLink::requested() : 0;
+        if ( $release > 0 && ReleaseLink::payable( $release, $user_id ) ) {
+            $cart_item_data[ ReleaseLink::ITEM_META ] = $release;
+        }
         if ( is_array( $service ) ) {
             $cart_item_data['_hpr_billing_service_key']   = $service['key'];
             $cart_item_data['_hpr_billing_service_title'] = $service['name'];
@@ -193,6 +198,11 @@ final class ManagedCart {
                 continue;
             }
 
+            $release = absint( $cart_item[ ReleaseLink::ITEM_META ] ?? 0 );
+            if ( $release > 0 && ! ReleaseLink::payable( $release, get_current_user_id() ) ) {
+                $this->add_error( __( 'This release is already paid for or is not on your account. Remove it and start again from the release.', 'hexa-pr-wire-billing' ) );
+            }
+
             if ( ProductCatalog::CUSTOM === $kind ) {
                 $service = get_current_user_id() > 0
                     ? $this->pricing->find_custom_service( get_current_user_id(), (string) ( $cart_item['_hpr_billing_service_key'] ?? '' ) )
@@ -238,6 +248,10 @@ final class ManagedCart {
     }
 
     public function display_cart_item_data( array $item_data, array $cart_item ): array {
+        $release = absint( $cart_item[ ReleaseLink::ITEM_META ] ?? 0 );
+        if ( $release > 0 ) {
+            $item_data[] = [ 'key' => __( 'Release', 'hexa-pr-wire-billing' ), 'value' => get_the_title( $release ) ];
+        }
         if ( ! empty( $cart_item['_hpr_billing_service_title'] ) ) {
             $item_data[] = [
                 'key'   => __( 'Service', 'hexa-pr-wire-billing' ),
@@ -255,6 +269,9 @@ final class ManagedCart {
         $item->add_meta_data( '_hpr_billing_kind', sanitize_key( (string) ( $values['_hpr_billing_kind'] ?? '' ) ), true );
         $item->add_meta_data( '_hpr_billing_unit_price', wc_format_decimal( (string) ( $values['_hpr_billing_price'] ?? '' ) ), true );
         $item->add_meta_data( '_hpr_billing_pricing_user_id', absint( $values['_hpr_billing_user_id'] ?? 0 ), true );
+        if ( ! empty( $values[ ReleaseLink::ITEM_META ] ) ) {
+            $item->add_meta_data( ReleaseLink::ITEM_META, absint( $values[ ReleaseLink::ITEM_META ] ), true );
+        }
         if ( ! empty( $values['_hpr_billing_service_title'] ) ) {
             $item->add_meta_data( 'Service', sanitize_text_field( (string) $values['_hpr_billing_service_title'] ), true );
             $item->add_meta_data( '_hpr_billing_service_key', sanitize_key( (string) ( $values['_hpr_billing_service_key'] ?? '' ) ), true );

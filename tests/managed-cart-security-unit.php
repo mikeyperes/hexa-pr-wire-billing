@@ -163,6 +163,7 @@ function wp_doing_ajax(): bool {
 require dirname( __DIR__ ) . '/src/Settings/SettingsRepository.php';
 require dirname( __DIR__ ) . '/src/Commerce/ProductCatalog.php';
 require dirname( __DIR__ ) . '/src/Commerce/Pricing/CustomerPricingRepository.php';
+require dirname( __DIR__ ) . '/src/Commerce/Fulfillment/ReleaseLink.php';
 require dirname( __DIR__ ) . '/src/Commerce/Cart/ManagedCart.php';
 
 use HexaPrWire\Billing\Commerce\Cart\ManagedCart;

@@ -15,6 +15,11 @@ The plugin is intentionally separate from `hexa-pr-wire-distributor`. Distributi
 - **Does:** checkout is the only order page. The wp-admin "Place an Order" item opens it in a new tab with a standard release in the cart, and the Packages and Submit pages redirect to it.
 - **Code:** `src/Commerce/Checkout/OrderEntry.php`
 
+### Paying for an existing release
+- **Does:** checkout with `?release=<post ID>` pays for the customer's own unpaid release; the payment links to it instead of creating a new draft. Hexa PR Wire Core's Release Status box shows the "Pay for this release" button.
+- **Repair:** `wp hpr-billing link-order <order_id> <post_id>`.
+- **Code:** `src/Commerce/Fulfillment/ReleaseLink.php`
+
 ### Checkout fields
 - **Does:** extra release fields on checkout.
 - **Use:** automatic on the WooCommerce checkout.

@@ -19,6 +19,21 @@ final class CheckoutFields {
         add_action( 'woocommerce_admin_order_data_after_billing_address', [ $this, 'render_admin_order_fields' ] );
         add_filter( 'woocommerce_email_order_meta_fields', [ $this, 'email_order_fields' ], 20, 3 );
         add_action( 'woocommerce_order_details_after_order_table', [ $this, 'render_customer_order_fields' ] );
+        add_filter( 'woocommerce_checkout_get_value', [ $this, 'prefill_release_title' ], 20, 2 );
+    }
+
+    /** Paying for an existing release fills the title from that release. */
+    public function prefill_release_title( mixed $value, string $input ): mixed {
+        if ( 'order_press_release_title' !== $input || ( null !== $value && '' !== $value ) || ! function_exists( 'WC' ) || ! WC()->cart ) {
+            return $value;
+        }
+        foreach ( WC()->cart->get_cart() as $item ) {
+            $release = absint( $item[ \HexaPrWire\Billing\Commerce\Fulfillment\ReleaseLink::ITEM_META ] ?? 0 );
+            if ( $release > 0 ) {
+                return get_the_title( $release );
+            }
+        }
+        return $value;
     }
 
     public function filter_fields( array $fields ): array {

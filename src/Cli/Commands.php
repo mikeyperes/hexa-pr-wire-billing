@@ -62,6 +62,31 @@ final class Commands {
         );
     }
 
+    /**
+     * Link a paid order to a release that already exists (when a payment created a new
+     * blank draft instead). Keeps the release's title and content.
+     *
+     * ## OPTIONS
+     *
+     * <order_id>
+     * : WooCommerce order ID.
+     *
+     * <post_id>
+     * : The existing release (post) ID.
+     *
+     * @subcommand link-order
+     */
+    public function link_order( array $args, array $assoc_args ): void {
+        unset( $assoc_args );
+        $order = wc_get_order( absint( $args[0] ?? 0 ) );
+        $post  = get_post( absint( $args[1] ?? 0 ) );
+        if ( ! $order instanceof \WC_Order || ! $post instanceof \WP_Post || 'post' !== $post->post_type ) {
+            \WP_CLI::error( 'Order or release not found.' );
+        }
+        $post_id = ( new \HexaPrWire\Billing\Commerce\Fulfillment\OrderFulfillment() )->attach_release( $order, (int) $post->ID );
+        \WP_CLI::success( 'Order #' . $order->get_id() . ' is linked to release #' . $post_id . '.' );
+    }
+
     /** Print migration and runtime ownership status. */
     public function status( array $args, array $assoc_args ): void {
         unset( $args, $assoc_args );

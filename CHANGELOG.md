@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.0 - 2026-10-20
+
+- Pay for an existing release: checkout accepts `?release=<post ID>` for the customer's own unpaid release. The order line keeps it (`_hpr_billing_release_id`), the article title is filled from the release, and fulfillment links the payment to that release instead of creating a new blank draft. Before, every payment created a new draft, so paying for a release you had already written left it showing "No payment is linked".
+- `wp hpr-billing link-order <order_id> <post_id>` links a paid order to an existing release for repairs.
+
 ## 1.2.0 - 2026-10-19
 
 - Remove the Place an Order catalog: the wp-admin order page, the `[hpr_billing_catalog]` and `[hpr_billing_order_portal]` shortcodes, their stylesheet, the Order Portal tab and both feature switches. Checkout is now the only order page.
